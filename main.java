@@ -65,8 +65,9 @@ public class main {
                 print(word, operator);
                 word = new StringBuilder();
             } else {
-                print(word, operator);
+
                 if((int) s.charAt(0) != 9){
+                    print(word, operator);
                     System.out.println("Err");
                     return 1;
                 }
