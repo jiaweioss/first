@@ -82,7 +82,7 @@ public class main {
         while (sc.hasNextLine()&&i == 0)//逐行读取文件内容
         {
             String line = sc.nextLine();
-            if(!line.isEmpty())
+            if(if(Integer.valueOf(line.charAt(0))!=9))
             i = analyze(line + " ");
         }
     }
