@@ -56,6 +56,10 @@ public class main {
                     print(word, operator);
                     word = new StringBuilder();
                 }
+                else if(isInteger(word.toString())&&(s.charAt(0) < 48 && s.charAt(0) > 57)){
+                    print(word, operator);
+                    word = new StringBuilder();
+                }
                 word.append(s);
             } else if (s.equals(" ") || s.equals("\n")) {
                 print(word, operator);
