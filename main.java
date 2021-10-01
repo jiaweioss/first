@@ -66,7 +66,6 @@ public class main {
                 word = new StringBuilder();
             } else {
                 print(word, operator);
-                System.out.println(Integer.valueOf(s.charAt(0)));
                 System.out.println("Err");
                 return 1;
             }
