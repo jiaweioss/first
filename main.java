@@ -56,7 +56,7 @@ public class main {
                     print(word, operator);
                     word = new StringBuilder();
                 }
-                else if(isInteger(word.toString())&&(s.charAt(0) < 48 && s.charAt(0) > 57)){
+                else if(isInteger(word.toString())&&(s.charAt(0) < 48 || s.charAt(0) > 57)){
                     print(word, operator);
                     word = new StringBuilder();
                 }
