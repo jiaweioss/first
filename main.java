@@ -83,7 +83,7 @@ public class main {
         while (sc.hasNextLine())//逐行读取文件内容
         {
             String line = sc.nextLine();
-           System.out.println(line);
+          i = analyze(line + " ");
         }
     }
 }
