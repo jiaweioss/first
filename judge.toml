@@ -1,7 +1,13 @@
-[jobs.pascal_lex]
+# -- judge.toml --
+# 这个文件负责告诉评测姬你需要怎么评测你的程序
 
-image = { source = "dockerfile", path = ".", tag = "pascal-lex-example" }
+# 我们的评测标识符是 lexer
+[jobs.lexer]
+# 使用 Dockerfile 来源，路径就是当前文件夹
+image = { source = "dockerfile", path = "." }
 
+# 假如你用的是 Java
 run = [
-  "java program $input",
+  # 运行程序
+  "java my.path.MyClass $input",
 ]
