@@ -82,7 +82,8 @@ public class main {
         int i = 0;
         while (sc.hasNextLine())//逐行读取文件内容
         {
-           System.out.println(sc);
+            String line = sc.nextLine();
+           System.out.println(line);
         }
     }
 }
