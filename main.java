@@ -83,7 +83,7 @@ public class main {
             String line = sc.nextLine();
             i = analyze(line + " ");
 
-            //System.out.println(line);
+            System.out.println(line);
         }
     }
 }
