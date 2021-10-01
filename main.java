@@ -70,6 +70,9 @@ public class main {
                     print(word, operator);
                     System.out.println("Err");
                     return 1;
+                }else{
+                    print(word, operator);
+                    word = new StringBuilder();
                 }
             }
         }
