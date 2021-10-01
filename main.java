@@ -80,7 +80,7 @@ public class main {
         String pathname = args[0];
         Scanner sc = new Scanner(new File(pathname));
         int i = 0;
-        while (sc.hasNextLine())//逐行读取文件内容
+        while (sc.hasNextLine()&&i == 0)//逐行读取文件内容
         {
             String line = sc.nextLine();
           i = analyze(line + " ");
