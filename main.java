@@ -61,7 +61,6 @@ public class main {
             } else {
                 print(word, operator);
                 System.out.println("Err");
-                break;
             }
         }
     }
