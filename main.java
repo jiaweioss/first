@@ -32,7 +32,7 @@ public class main {
         }
     }
 
-    public static void analyze(String line) {
+    public static int analyze(String line) {
         List<String> operator = Arrays.asList("=", ";", "(", ")", "{", "}", "+", "*", "/", "<", ">", "==");
         StringBuilder word = new StringBuilder();
         for (int i = 0; i < line.length(); i++) {
@@ -61,18 +61,23 @@ public class main {
             } else {
                 print(word, operator);
                 System.out.println("Err");
+                return 1;
             }
         }
+        return 0;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         String pathname = args[0];
         Scanner sc = new Scanner(new File(pathname));
-
+        int i = 0;
         while (sc.hasNextLine())//逐行读取文件内容
         {
             String line = sc.nextLine();
-            analyze(line+" ");
+            while (i == 0) {
+                i = analyze(line + " ");
+            }
+
             //System.out.println(line);
         }
     }
