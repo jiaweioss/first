@@ -66,8 +66,10 @@ public class main {
                 word = new StringBuilder();
             } else {
                 print(word, operator);
-                System.out.println("Err");
-                return 1;
+                if((int) s.charAt(0) != 9){
+                    System.out.println("Err");
+                    return 1;
+                }
             }
         }
         return 0;
@@ -81,7 +83,6 @@ public class main {
         while (sc.hasNextLine()&&i == 0)//逐行读取文件内容
         {
             String line = sc.nextLine();
-            if(Integer.valueOf(line.charAt(0))!=9)
             i = analyze(line + " ");
         }
     }
