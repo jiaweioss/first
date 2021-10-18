@@ -7,6 +7,5 @@ FROM openjdk:12-alpine
 COPY ./* /app/
 # 编译程序
 WORKDIR /app/
-RUN javac -d ./output ./main.java
-# 将当前目录设为 /app/output
-WORKDIR /app/output
+RUN javac ./main.java
+
