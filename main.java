@@ -1,11 +1,16 @@
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
 
 
 public class main {
 
 
-    public static int main(String[] args) throws IOException {
-        //String pathname = ".\\test.txt";
+    public static void main(String[] args) throws IOException {
+//         String pathname = ".\\test.txt";
         String pathname = args[0];
         BufferedReader bf = new BufferedReader(new FileReader(pathname));
         StringBuilder tx = new StringBuilder();
@@ -19,7 +24,9 @@ public class main {
             line += '\n';
             tx.append(line);
         }
-            return(lexcical.analyze(tx.toString()));
+            if(lexcical.analyze(tx.toString())!=0){
+                throw new NullPointerException();
+            }
     }
 
 }
