@@ -7,5 +7,5 @@
 image = { source = "dockerfile", path = "." }
 
 run = [
-    "./compiler $input $ir",
+    "java main $input $ir",
 ]
