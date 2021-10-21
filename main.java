@@ -23,7 +23,7 @@ public class main {
         while (line!=null)//逐行读取文件内容
         {
             line = bf.readLine();
-            System.out,println(line);
+            System.out.println(line);
             if(line==null)
                 break;
             line += '\n';
