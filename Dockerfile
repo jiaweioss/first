@@ -7,7 +7,7 @@ FROM openjdk:15
 COPY . /app/
 # 编译程序
 WORKDIR /app/
-RUN javac -d dst 'cat sourse.txt' ./main.java
-WORKDIR /app/dst/
+RUN javac ./main.java
+WORKDIR /app/
 
 
