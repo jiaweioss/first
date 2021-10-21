@@ -47,7 +47,7 @@ public class lexcical {
                     i++;
                 }
                 i+=2;
-            } else if (line.charAt(i) != ' ' && line.charAt(i) != '\n'&&!(line.charAt(i) >= 47 && line.charAt(i) <= 58)) {
+            } else if (line.charAt(i) != ' ' && line.charAt(i) != '\n'&&!(line.charAt(i) >= 48 && line.charAt(i) <= 57)) {
                 word.append(line.charAt(i));
                 i++;
             } else if ((line.charAt(i) == ' ' || line.charAt(i) == '\n')&&i<line.length()) {
@@ -69,7 +69,7 @@ public class lexcical {
                     i++;
                 }
 
-            } else if (line.charAt(i) >= 47 && line.charAt(i) <= 58&&i<line.length()) {
+            } else if (line.charAt(i) >= 48 && line.charAt(i) <= 57&&i<line.length()) {
                 if (!moud[point-1].equals("return")) {
                     System.out.println(moud[point]);
                     return 2;
@@ -77,19 +77,19 @@ public class lexcical {
                     int num;
                     if (line.substring(i, i + 2).equals("0x") || line.substring(i, i + 2).equals("0X")) {
                         i += 2;
-                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
+                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
                             number.append(line.charAt(i));
                             i++;
                         }
                         num = Integer.parseInt(number.toString(), 16);
                     } else if(line.charAt(i)=='0'){
-                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
+                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
                             number.append(line.charAt(i));
                             i++;
                         }
                         num = Integer.parseInt(number.toString(), 8);
                     }else {
-                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
+                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
                             number.append(line.charAt(i));
                             i++;
                         }
