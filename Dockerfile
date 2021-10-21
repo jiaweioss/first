@@ -7,6 +7,5 @@ FROM openjdk:8
 COPY ./ /app/
 # 编译程序
 WORKDIR /app/
-RUN javac -d ./output ./main.java
-WORKDIR /app/output
+RUN javac -d ./main.java
 
