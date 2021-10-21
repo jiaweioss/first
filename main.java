@@ -27,7 +27,9 @@ public class main {
             line += '\n';
             tx.append(line);
         }
-            if(lexcical.analyze(tx.toString(),ir)!=0){
+        int s= lexcical.analyze(tx.toString(),ir);
+            if(s!=0){
+                System.out.println(s);
                 throw new NullPointerException();
             }
     }
