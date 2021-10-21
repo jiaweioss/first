@@ -14,6 +14,7 @@ public class main {
         String pathname = args[0];
         BufferedReader bf = new BufferedReader(new FileReader(pathname));
         File ir = new File(args[1]);
+        PrintStream out = System.out;
         PrintStream ps = new PrintStream(args[1]);
         System.setOut(ps);
         StringBuilder tx = new StringBuilder();
@@ -29,6 +30,7 @@ public class main {
         }
         int s= lexcical.analyze(tx.toString(),ir);
             if(s!=0){
+                System.setOut(out);
                 System.out.println(s);
                 throw new NullPointerException();
             }
