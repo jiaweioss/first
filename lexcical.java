@@ -94,7 +94,7 @@ public class lexcical {
                         int num;
                         if (line.substring(i, i + 2).equals("0x") || line.substring(i, i + 2).equals("0X")) {
                             i += 2;
-                            while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
+                            while ((line.charAt(i) >= 48 && line.charAt(i) <= 57)||(line.charAt(i)>='A'&&line.charAt(i)<='F')) {
                                 number.append(line.charAt(i));
                                 i++;
                             }
