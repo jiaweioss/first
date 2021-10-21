@@ -4,8 +4,9 @@
 # 使用 Java 12
 FROM openjdk:8
 # 向容器内复制文件
-COPY ./* /app/
+COPY ./ /app/
 # 编译程序
 WORKDIR /app/
-RUN javac ./main.java
+RUN javac -d ./output ./main.java
+WORKDIR /app/output
 
