@@ -14,6 +14,8 @@ public class main {
         String pathname = args[0];
         BufferedReader bf = new BufferedReader(new FileReader(pathname));
         File ir = new File(args[1]);
+        PrintStream ps = new PrintStream(args[1]);
+        System.setOut(ps);
         StringBuilder tx = new StringBuilder();
         String line = "";
         int i = 0;
