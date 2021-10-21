@@ -1,15 +1,16 @@
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class lexcical {
 
-    public static void printNum(int num) {
+    public static void printNum(int num,File ir) {
 
         System.out.println(num);
     }
 
-    public static void print(StringBuilder word) {
+    public static void print(StringBuilder word,File ir) {
         if(word.toString().equals("int")){
             System.out.print("define dso_local i32 ");
         }else if(word.toString().equals("main()")){
@@ -27,7 +28,7 @@ public class lexcical {
 
     }
 
-    public static int analyze(String line) {
+    public static int analyze(String line, File ir) {
         String[] moud = {"int", "main()", "{", "return", ";", "}"};
         StringBuilder word = new StringBuilder();
         StringBuilder number = new StringBuilder();
@@ -46,13 +47,13 @@ public class lexcical {
                     i++;
                 }
                 i+=2;
-            } else if (line.charAt(i) != ' ' && line.charAt(i) != '\n'&&!(line.charAt(i) >= 48 && line.charAt(i) <= 57)) {
+            } else if (line.charAt(i) != ' ' && line.charAt(i) != '\n'&&!(line.charAt(i) >= 47 && line.charAt(i) <= 58)) {
                 word.append(line.charAt(i));
                 i++;
             } else if ((line.charAt(i) == ' ' || line.charAt(i) == '\n')&&i<line.length()) {
                 if(word.length()!=0){
                     if (word.toString().equals(moud[point])) {
-                        print(word);
+                        print(word,ir);
                         word = new StringBuilder();
                         point++;
                         i++;
@@ -76,25 +77,25 @@ public class lexcical {
                     int num;
                     if (line.substring(i, i + 2).equals("0x") || line.substring(i, i + 2).equals("0X")) {
                         i += 2;
-                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
+                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
                             number.append(line.charAt(i));
                             i++;
                         }
                         num = Integer.parseInt(number.toString(), 16);
                     } else if(line.charAt(i)=='0'){
-                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
+                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
                             number.append(line.charAt(i));
                             i++;
                         }
                         num = Integer.parseInt(number.toString(), 8);
                     }else {
-                        while (line.charAt(i) >= 48 && line.charAt(i) <= 57) {
+                        while (line.charAt(i) >= 47 && line.charAt(i) <= 58) {
                             number.append(line.charAt(i));
                             i++;
                         }
                         num = Integer.parseInt(number.toString());
                     }
-                    printNum(num);
+                    printNum(num,ir);
                 }
             } else {
                 return 3;
