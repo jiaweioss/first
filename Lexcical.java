@@ -161,7 +161,7 @@ public class Lexcical {
                             }
                             nextChar();
                             addLineNum();
-                        } else if (currentChar == '*') {
+                        } else if (preRead() == '*') {
                             nextChar();
                             while (!(currentChar == '*' && preRead() == '/')) {
                                 if (currentChar == '\n') addLineNum();
