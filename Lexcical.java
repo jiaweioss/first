@@ -45,7 +45,7 @@ public class Lexcical {
 
     private char preRead() {
         if (this.Point <= this.Test.length() - 2)
-            return this.Test.charAt(Point + 1);
+            return this.Test.charAt(Point);
         else {
             //#为错误字符
             return '\0';
@@ -84,10 +84,8 @@ public class Lexcical {
             //NUMBER识别
             else if (Character.isDigit(currentChar)) {
                 StringBuilder temp = new StringBuilder();
-                if (currentChar == '0' && preRead() == 'x') {
-                    temp.append(currentChar);
+                if ((currentChar == '0' && preRead() == 'x')||(currentChar == '0' && preRead() == 'X')) {
                     nextChar();
-                    temp.append(currentChar);
                     nextChar();
                     while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F')) {
                         temp.append(currentChar);
@@ -96,6 +94,7 @@ public class Lexcical {
                     symbolType = SymbolType.HEXNUM;
                     setToken(temp.toString(), symbolType);
                 } else if (currentChar == '0' && Character.isDigit(preRead())) {
+                    nextChar();
                     while (Character.isDigit(currentChar)) {
                         temp.append(currentChar);
                         nextChar();
