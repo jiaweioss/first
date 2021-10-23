@@ -32,7 +32,7 @@ public class main {
 //        String pathname = args[0];
 
         PrintStream ps = new PrintStream("answer.txt");
-//        System.setOut(ps);
+        System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
         //词法分析程序
