@@ -32,10 +32,11 @@ public class main {
         String pathname = args[0];
 
         PrintStream ps = new PrintStream(args[1]);
-        System.setOut(ps);
+//         System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
         //词法分析程序
+        System.out.println(Test);
         TOKEN = new Lexcical(Test).analyze();
 //        for (Token token:TOKEN
 //        ) {
