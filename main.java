@@ -31,7 +31,7 @@ public class main {
 //         String pathname = ".\\test.txt";
         String pathname = args[0];
 
-        PrintStream ps = new PrintStream("answer.txt");
+        PrintStream ps = new PrintStream(args[1]);
         System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
