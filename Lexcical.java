@@ -65,12 +65,20 @@ public class Lexcical {
                 }
                 this.symbolType = Keyword.keywordMap.getOrDefault(temp.toString(), SymbolType.IDENT);
                 if(temp.toString().equals("getint")&&currentChar=='('){
+                    if(funcMap.getfuncMap().get("getint")==null)
+                    funcMap.getfuncMap().put("getint",new func("void","getint"));
                     this.symbolType = SymbolType.GETINT;
                 }else if(temp.toString().equals("getch")&&currentChar=='('){
+                    if(funcMap.getfuncMap().get("getch")==null)
+                        funcMap.getfuncMap().put("getch",new func("void","getch"));
                     this.symbolType = SymbolType.GETCH;
                 }else if(temp.toString().equals("putint")&&currentChar=='('){
+                    if(funcMap.getfuncMap().get("putint")==null)
+                        funcMap.getfuncMap().put("putint",new func("int","putint"));
                     this.symbolType = SymbolType.PUTINT;
                 }else if(temp.toString().equals("putch")&&currentChar=='('){
+                    if(funcMap.getfuncMap().get("putch")==null)
+                        funcMap.getfuncMap().put("putch",new func("int","putch"));
                     this.symbolType = SymbolType.PUTCH;
                 }
                 setToken(temp.toString(), symbolType);

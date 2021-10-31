@@ -44,11 +44,11 @@ public class main {
 //        }
         ASTRoot = new Gramma(TOKEN).analyze();
 
-        printTree p = new printTree();
-        p.print(ASTRoot,0);
+//        printTree p = new printTree();
+//        p.print(ASTRoot,0);
 
         new Semantic().analyze(ASTRoot,0);
-        BlockPrint(BlockMap.getBlockMap());
+//        BlockPrint(BlockMap.getBlockMap());
         new TargetCodeGenerator().Generator(ASTRoot);
 
 

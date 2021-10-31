@@ -90,7 +90,14 @@ public class TargetCodeGenerator {
     }
 
     public void defFunc() {
-
+        for (func fun : funcMap.getfuncMap().values()
+        ) {
+            if (fun.name.equals("getint") || fun.name.equals("getch")) {
+                System.out.println("declare " + fun.type + " @" + fun.name + "()");
+            } else {
+                System.out.println("declare " + fun.type + " @" + fun.name + "(i32)");
+            }
+        }
     }
 
     public void defVariable(Integer Id) {
@@ -161,7 +168,7 @@ public class TargetCodeGenerator {
 
     public regValue UnaryExp(ASTNode Node, Integer blockID) throws ERR {
         regValue reg;
-        ASTNode func = new ASTNode(new Token(SymbolType.NONE,"none",0),new ArrayList<>());
+        ASTNode func = new ASTNode(new Token(SymbolType.NONE, "none", 0), new ArrayList<>());
         int op = 1;
         ArrayList<ASTNode> List = Node.getNodeList();
         for (ASTNode node : List
@@ -169,8 +176,8 @@ public class TargetCodeGenerator {
             if (node.getToken().getSymbolType() == SymbolType.MINU) {
                 op *= -1;
             }
-            if(node.getToken().getSymbolType() == SymbolType.GETINT||node.getToken().getSymbolType() == SymbolType.PUTINT
-                    ||node.getToken().getSymbolType() == SymbolType.GETCH||node.getToken().getSymbolType() == SymbolType.PUTCH){
+            if (node.getToken().getSymbolType() == SymbolType.GETINT || node.getToken().getSymbolType() == SymbolType.PUTINT
+                    || node.getToken().getSymbolType() == SymbolType.GETCH || node.getToken().getSymbolType() == SymbolType.PUTCH) {
                 func = node;
             }
         }
@@ -179,7 +186,7 @@ public class TargetCodeGenerator {
             System.out.println("%" + regPoint + " = call i32 @" + func.getToken().getValue() + "()");
             reg = new regValue(regPoint, true);
         } else if (func.getToken().getSymbolType() == SymbolType.PUTCH || func.getToken().getSymbolType() == SymbolType.PUTINT) {
-            System.out.println("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2),blockID).print() + ")");
+            System.out.println("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2), blockID).print() + ")");
             reg = new regValue(regPoint, true);
         } else {
             reg = PrimaryExp(List.get(List.size() - 1), blockID);
