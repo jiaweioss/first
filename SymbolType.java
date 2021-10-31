@@ -19,8 +19,10 @@ public enum SymbolType {
     AND,                // &&
     OR,                 // ||
     WHILETK,            // while
-    GETINTTK,           // getint
-    PRINTFTK,           // printf
+    GETINT,           // getint
+    GETCH,              // getch
+    PUTCH,              // putch
+    PUTINT,             // printf
     RETURNTK,           // return
     PLUS,               // +
     MINU,               // -

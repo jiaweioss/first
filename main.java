@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 
@@ -28,11 +29,11 @@ public class main {
     public static void main(String[] args) throws IOException, ERR {
         ArrayList<Token> TOKEN = new ArrayList<>();
         ASTNode ASTRoot;
-//         String pathname = ".\\test.txt";
-        String pathname = args[0];
+        String pathname = ".\\test.txt";
+//        String pathname = args[0];
 
-        PrintStream ps = new PrintStream(args[1]);
-        System.setOut(ps);
+        PrintStream ps = new PrintStream("answer.txt");
+//        System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
         //词法分析程序
@@ -42,23 +43,28 @@ public class main {
 //            System.out.println(token.getSymbolType()+" "+token.getValue());
 //        }
         ASTRoot = new Gramma(TOKEN).analyze();
-//        printAST(ASTRoot);
-        new Semantic().analyze(ASTRoot);
+
+        printTree p = new printTree();
+        p.print(ASTRoot,0);
+
+        new Semantic().analyze(ASTRoot,0);
+        BlockPrint(BlockMap.getBlockMap());
+        new TargetCodeGenerator().Generator(ASTRoot);
+
+
 
     }
 
-    public static void printAST(ASTNode AST) {
-        System.out.print(AST.getToken().getValue()+" ");
-        for (ASTNode node:AST.getNodeList()
-        ) {
-            System.out.print(node.getToken().getValue()+" ");
-        }
-        System.out.println();
-        for (ASTNode node:AST.getNodeList()
-             ) {
-            printAST(node);
-        }
+    public static void BlockPrint(HashMap blockMap) {
+        for (Object block:
+             blockMap.values()) {
+            Block b = (Block) block;
+            for (Identifier ident:b.Identifiers.values()
+                 ) {
+                System.out.println(ident.name+" "+ident.value);
+            }
 
+        }
     }
 
 

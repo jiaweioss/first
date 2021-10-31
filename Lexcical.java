@@ -1,12 +1,5 @@
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 public class Lexcical {
 
@@ -70,21 +63,25 @@ public class Lexcical {
                     temp.append(currentChar);
                     nextChar();
                 }
-                if (Keyword.keywordMap.keySet().contains(temp.toString())) {
-                    this.symbolType = Keyword.keywordMap.get(temp.toString());
-                } else {
-                    symbolType = SymbolType.IDENT;
+                this.symbolType = Keyword.keywordMap.getOrDefault(temp.toString(), SymbolType.IDENT);
+                if(temp.toString().equals("getint")&&currentChar=='('){
+                    this.symbolType = SymbolType.GETINT;
+                }else if(temp.toString().equals("getch")&&currentChar=='('){
+                    this.symbolType = SymbolType.GETCH;
+                }else if(temp.toString().equals("putint")&&currentChar=='('){
+                    this.symbolType = SymbolType.PUTINT;
+                }else if(temp.toString().equals("putch")&&currentChar=='('){
+                    this.symbolType = SymbolType.PUTCH;
                 }
                 setToken(temp.toString(), symbolType);
-            }
-            else if(currentChar=='\n'){
+            } else if (currentChar == '\n') {
                 addLineNum();
                 nextChar();
             }
             //NUMBER识别
             else if (Character.isDigit(currentChar)) {
                 StringBuilder temp = new StringBuilder();
-                if ((currentChar == '0' && preRead() == 'x')||(currentChar == '0' && preRead() == 'X')) {
+                if ((currentChar == '0' && preRead() == 'x') || currentChar == '0' && preRead() == 'X') {
                     nextChar();
                     nextChar();
                     while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F')) {
