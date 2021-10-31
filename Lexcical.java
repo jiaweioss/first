@@ -74,11 +74,11 @@ public class Lexcical {
                     this.symbolType = SymbolType.GETCH;
                 }else if(temp.toString().equals("putint")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("putint")==null)
-                        funcMap.getfuncMap().put("putint",new func("int","putint"));
+                        funcMap.getfuncMap().put("putint",new func("i32","putint"));
                     this.symbolType = SymbolType.PUTINT;
                 }else if(temp.toString().equals("putch")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("putch")==null)
-                        funcMap.getfuncMap().put("putch",new func("int","putch"));
+                        funcMap.getfuncMap().put("putch",new func("i32","putch"));
                     this.symbolType = SymbolType.PUTCH;
                 }
                 setToken(temp.toString(), symbolType);
