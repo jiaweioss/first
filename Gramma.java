@@ -13,6 +13,13 @@ public class Gramma {
         return 0;
     }
 
+    private boolean checkToken(SymbolType symbol) {
+        if (currentToken.getSymbolType() == symbol) {
+            return true;
+        }
+        return false;
+    }
+
     private void nextToken() {
         if (this.Point < this.Tokens.size()) {
             this.currentToken = this.Tokens.get(Point);
@@ -21,6 +28,10 @@ public class Gramma {
             this.Point++;
             this.currentToken = null;
         }
+    }
+
+    private Token peek(int i) {
+        return this.Tokens.get(Point + i - 1);
     }
 
     public Gramma(ArrayList<Token> Tokens) {
@@ -35,7 +46,34 @@ public class Gramma {
 
     private ASTNode compUnit() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "compUnit", 0), new ArrayList<>());
-        Node.addNode(funcDef());
+
+        do {
+            switch (currentToken.getSymbolType()) {
+                case CONSTTK: // 常量定义
+                    Node.addNode(Decl());
+                    break;
+                case INTTK:  // 变量定义, 函数定义, 主函数定义
+                    Token tempToken = peek(1);
+                    Token tempToken2 = peek(2);
+
+                    if (tempToken.getSymbolType() == SymbolType.IDENT) {
+                        if (tempToken2.getSymbolType() == SymbolType.LPARENT) {
+                            Node.addNode(funcDef());
+                        } else {
+                            Node.addNode(Decl());
+                        }
+                    } else if (tempToken.getSymbolType() == SymbolType.MAINTK) {
+                        Node.addNode(funcDef());
+                    }
+                    break;
+                case VOIDTK: // 函数定义
+                    Node.addNode(funcDef());
+                    break;
+                default:
+                    // TODO: ERROR
+                    break;
+            }
+        } while (currentToken.getSymbolType() != SymbolType.CODEEND);
         return Node;
     }
 
@@ -85,6 +123,19 @@ public class Gramma {
     private ASTNode ConstDef() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "ConstDef", 0), new ArrayList<>());
         Node.addNode(Ident());
+
+        while (currentToken.getSymbolType() == SymbolType.LBRACK) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(ConstExp());
+
+            if (currentToken.getSymbolType() == SymbolType.RBRACK) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("ConstDef");
+            }
+        }
         if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
@@ -97,7 +148,27 @@ public class Gramma {
 
     private ASTNode ConstInitVal() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "ConstInitVal", 0), new ArrayList<>());
-        Node.addNode(ConstExp());
+        if (currentToken.getSymbolType() == SymbolType.LBRACE) {
+            // ConstInitVal → '{' [ ConstInitVal { ',' ConstInitVal } ] '}'
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            if (currentToken.getSymbolType() != SymbolType.RBRACE) {
+                Node.addNode(ConstInitVal());
+                while (currentToken.getSymbolType() == SymbolType.COMMA) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                    Node.addNode(ConstInitVal());
+                }
+            }
+            if (currentToken.getSymbolType() == SymbolType.RBRACE) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("ConstInitVal");
+            }
+        } else {
+            Node.addNode(ConstExp());
+        }
         return Node;
     }
 
@@ -128,6 +199,19 @@ public class Gramma {
     private ASTNode VarDef() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "VarDef", 0), new ArrayList<>());
         Node.addNode(Ident());
+
+        while (currentToken.getSymbolType() == SymbolType.LBRACK) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(ConstExp());
+            if (currentToken.getSymbolType() == SymbolType.RBRACK) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("VarDef");
+            }
+        }
+
         if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
@@ -138,7 +222,27 @@ public class Gramma {
 
     private ASTNode InitVal() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "InitVal", 0), new ArrayList<>());
-        Node.addNode(Exp());
+        if (currentToken.getSymbolType() == SymbolType.LBRACE) {
+            // ConstInitVal → '{' [ ConstInitVal { ',' ConstInitVal } ] '}'
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            if (currentToken.getSymbolType() != SymbolType.RBRACE) {
+                Node.addNode(InitVal());
+                while (currentToken.getSymbolType() == SymbolType.COMMA) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                    Node.addNode(InitVal());
+                }
+            }
+            if (currentToken.getSymbolType() == SymbolType.RBRACE) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("InitVal");
+            }
+        } else {
+            Node.addNode(Exp());
+        }
         return Node;
     }
 
@@ -150,25 +254,73 @@ public class Gramma {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
-            throw new ERR("main的左括号没了");
+            throw new ERR("funcDef的左括号没了");
         }
+
+
         if (currentToken.getSymbolType() == SymbolType.RPARENT) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
-            throw new ERR("main的右括号没了");
+            Node.addNode(FuncFParams());
+            if (currentToken.getSymbolType() == SymbolType.RPARENT) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("funcDef的右括号没了");
+            }
         }
         Node.addNode(Block());
         return Node;
     }
 
+    private ASTNode FuncFParams() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncFParams", 0), new ArrayList<>());
+        Node.addNode(FuncFParam());
+
+        while (currentToken.getSymbolType() == SymbolType.COMMA) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(FuncFParam());
+        }
+
+        return Node;
+    }
+
+    private ASTNode FuncFParam() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncFParam", 0), new ArrayList<>());
+        Node.addNode(Btype());
+        Node.addNode(Ident());
+        if (currentToken.getSymbolType() == SymbolType.LBRACK) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            if (currentToken.getSymbolType() == SymbolType.RBRACK) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            }
+            while (currentToken.getSymbolType() == SymbolType.LBRACK) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+
+                //TODO:FuncFParam   -> BType Ident ['[' ']' { '[' Exp ']' }]
+                Node.addNode(ConstExp());
+                if (currentToken.getSymbolType() == SymbolType.RBRACK) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                }
+            }
+        }
+
+        return Node;
+    }
+
     private ASTNode funcType() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "funcType", 0), new ArrayList<>());
-        if (currentToken.getSymbolType() == SymbolType.INTTK) {
+        if (currentToken.getSymbolType() == SymbolType.INTTK || currentToken.getSymbolType() == SymbolType.VOIDTK) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
-            throw new ERR("funcType中的Int");
+            throw new ERR("funcType");
         }
         return Node;
     }
@@ -179,6 +331,7 @@ public class Gramma {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
+            System.out.println(currentToken.getValue());
             throw new ERR("main没了");
         }
         return Node;
@@ -218,6 +371,17 @@ public class Gramma {
     private ASTNode LVal() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "LVal", 0), new ArrayList<>());
         Node.addNode(Ident());
+        while (currentToken.getSymbolType() == SymbolType.LBRACK) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(Exp());
+            if (currentToken.getSymbolType() == SymbolType.RBRACK) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                throw new ERR("LVal     ");
+            }
+        }
         return Node;
     }
 
@@ -225,32 +389,129 @@ public class Gramma {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "Stmt", 0), new ArrayList<>());
 
 
-        if (currentToken.getSymbolType() == SymbolType.RETURNTK) {
-            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
-            nextToken();
-            Node.addNode(Exp());
-        } else if (currentToken.getSymbolType() == SymbolType.IDENT) {
-            Node.addNode(LVal());
-            if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
+//            //[Exp] ';' 表示可以有一个Exp，也可以仅有一个分号
+//            if (currentToken.getSymbolType() != SymbolType.SEMICN) {
+//                Node.addNode(Exp());
+//            }
+
+        switch (currentToken.getSymbolType()) {
+            case RETURNTK:
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
-            } else {
-                throw new ERR("Stmt:=");
-            }
-            Node.addNode(Exp());
-
-        } else {
-            //[Exp] ';' 表示可以有一个Exp，也可以仅有一个分号
-            if (currentToken.getSymbolType() != SymbolType.SEMICN) {
                 Node.addNode(Exp());
-            }
+                if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                break;
+            case IDENT:
+                Node.addNode(LVal());
+                if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:=");
+                }
+                Node.addNode(Exp());
+                if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                break;
+            case SEMICN:
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+                break;
+            case LBRACE:
+                Node.addNode(Block());
+                break;
+            case IFTK:
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+                if (currentToken.getSymbolType() == SymbolType.LPARENT) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                Node.addNode(Cond());
+                if (currentToken.getSymbolType() == SymbolType.RPARENT) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                Node.addNode(Stmt());
+                if (currentToken.getSymbolType() == SymbolType.ELSETK) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                    Node.addNode(Stmt());
+                }
+                break;
+            default:
+                Node.addNode(Exp());
+                if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                break;
         }
+        return Node;
+    }
 
-        if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+    private ASTNode Cond() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "Cond", 0), new ArrayList<>());
+        Node.addNode(LOrExp());
+        return Node;
+    }
+
+    private ASTNode LOrExp() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "LorExp", 0), new ArrayList<>());
+        Node.addNode(LAndExp());
+        while (currentToken.getValue().equals("||")) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
-        } else {
-            throw new ERR("Stmt:;没了");
+            Node.addNode(LAndExp());
+        }
+        return Node;
+    }
+
+    private ASTNode LAndExp() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "LAndExp", 0), new ArrayList<>());
+        Node.addNode(EqExp());
+        while (currentToken.getValue().equals("&&")) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(EqExp());
+        }
+        return Node;
+    }
+
+    private ASTNode EqExp() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "EqExp", 0), new ArrayList<>());
+        Node.addNode(RelExp());
+        while (currentToken.getValue().equals("==") || currentToken.getValue().equals("!=")) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(RelExp());
+        }
+        return Node;
+    }
+
+    private ASTNode RelExp() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "RelExp", 0), new ArrayList<>());
+        Node.addNode(AddExp());
+        while (currentToken.getValue().equals(">") || currentToken.getValue().equals("<") ||
+                currentToken.getValue().equals("<=") || currentToken.getValue().equals(">=")) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(AddExp());
         }
         return Node;
     }
@@ -331,7 +592,7 @@ public class Gramma {
             }
         } else {
             while (currentToken.getSymbolType() == SymbolType.PLUS
-                    || currentToken.getSymbolType() == SymbolType.MINU) {
+                    || currentToken.getSymbolType() == SymbolType.MINU|| currentToken.getSymbolType() == SymbolType.NOT) {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
             }

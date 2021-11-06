@@ -50,7 +50,13 @@ public class Semantic {
     }
 
     boolean checkHas(ASTNode Node)  {
-        return this.block.Identifiers.containsKey(Node.getToken().getValue());
+        Block temp = this.block;
+        while(temp != null){
+            if(temp.Identifiers.containsKey(Node.getToken().getValue()))
+                return true;
+            temp = temp.Father;
+        }
+        return false;
     }
 
 
