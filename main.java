@@ -29,7 +29,7 @@ public class main {
     public static void main(String[] args) throws IOException, ERR {
         ArrayList<Token> TOKEN = new ArrayList<>();
         ASTNode ASTRoot;
-        String pathname = ".\\test.txt";
+//         String pathname = ".\\test.txt";
         String pathname = args[0];
 
         PrintStream ps = new PrintStream(args[1]);
