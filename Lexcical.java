@@ -92,7 +92,7 @@ public class Lexcical {
                 if ((currentChar == '0' && preRead() == 'x') || currentChar == '0' && preRead() == 'X') {
                     nextChar();
                     nextChar();
-                    while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F')) {
+                    while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F')||(currentChar >= 'a' && currentChar <= 'f')) {
                         temp.append(currentChar);
                         nextChar();
                     }
