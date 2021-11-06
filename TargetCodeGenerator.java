@@ -87,7 +87,7 @@ public class TargetCodeGenerator {
                 TargetCode.add(regPoint + ":");
                 printStmt(Node.getNodeList().get(4), blockID);
                 TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
-                TargetCode.add("br label %" + (++regPoint));
+                TargetCode.add("br label %" + (regPoint));
                 TargetCode.add("");
                 TargetCode.add(regPoint + ":");
 
@@ -106,7 +106,7 @@ public class TargetCodeGenerator {
                 TargetCode.add(regPoint + ":");
 
                 printStmt(Node.getNodeList().get(6), blockID);
-                TargetCode.add("br label %" + (++regPoint));
+                TargetCode.add("br label %" + (regPoint));
                 TargetCode.set(mark2 - 1, TargetCode.get(mark2 - 1) + regPoint);
                 TargetCode.add("");
                 TargetCode.add(regPoint + ":");
