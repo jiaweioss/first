@@ -72,6 +72,7 @@ public class TargetCodeGenerator {
         if (Node.getNodeList().get(0).getToken().getSymbolType() == SymbolType.RETURNTK) {
             checkLine(Node.getNodeList().get(0).getToken());
             TargetCode.add("ret i32 " + printExp(Node.getNodeList().get(1), blockID).print());
+            regPoint++;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("LVal")) {
             Identifier key = searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
             TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
