@@ -183,7 +183,7 @@ public class TargetCodeGenerator {
             regValue reg;
             regValue temp1 = printAndExp(Node.getNodeList().get(0), blockID);
             regValue temp2 = printAndExp(Node.getNodeList().get(2), blockID);
-            TargetCode.add("%" + (++regPoint) + " = or i32 " +
+            TargetCode.add("%" + (++regPoint) + " = or i1 " +
                     temp1.print() + "," + temp2.print());
             temp1 = new regValue(regPoint, true);
             for (int i = 4; i < Node.getNodeList().size() - 1; i += 2) {
@@ -207,7 +207,7 @@ public class TargetCodeGenerator {
             regValue reg;
             regValue temp1 = printEqExp(Node.getNodeList().get(0), blockID);
             regValue temp2 = printEqExp(Node.getNodeList().get(2), blockID);
-            TargetCode.add("%" + (++regPoint) + " = and i32 " +
+            TargetCode.add("%" + (++regPoint) + " = and i1 " +
                     temp1.print() + "," + temp2.print());
             temp1 = new regValue(regPoint, true);
             for (int i = 4; i < Node.getNodeList().size() - 1; i += 2) {
