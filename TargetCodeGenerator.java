@@ -247,7 +247,7 @@ public class TargetCodeGenerator {
             return printRelExp(Node.getNodeList().get(0), blockID);
         } else {
             String s = printAddExp(Node.getNodeList().get(0).getNodeList().get(0), blockID).print();
-            TargetCode.add("%" + (++regPoint) + " = icmp eq i32 " +
+            TargetCode.add("%" + (++regPoint) + " = icmp ne i32 " +
                     s + ", 0");
             return new regValue(regPoint, true);
         }
