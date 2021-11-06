@@ -230,13 +230,13 @@ public class TargetCodeGenerator {
             regValue reg;
             regValue temp1 = printRelExp(Node.getNodeList().get(0), blockID);
             regValue temp2 = printRelExp(Node.getNodeList().get(2), blockID);
-            TargetCode.add("%" + (++regPoint) + " = icmp " + ty(Node.getNodeList().get(1)) + "i32 " +
+            TargetCode.add("%" + (++regPoint) + " = icmp " + ty(Node.getNodeList().get(1)) + " i32 " +
                     temp1.print() + "," + temp2.print());
             temp1 = new regValue(regPoint, true);
             for (int i = 4; i < Node.getNodeList().size() - 1; i += 2) {
 
                 temp2 = printAddExp(Node.getNodeList().get(i), blockID);
-                TargetCode.add("%" + (++regPoint) + " = icmp " + ty(Node.getNodeList().get(i - 1)) + "i32 " +
+                TargetCode.add("%" + (++regPoint) + " = icmp " + ty(Node.getNodeList().get(i - 1)) + " i32 " +
                         temp1.print() + ", " + temp2.print());
                 temp1 = new regValue(regPoint, true);
             }
