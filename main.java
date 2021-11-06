@@ -40,14 +40,14 @@ public class main {
         //词法分析程序
         TOKEN = new Lexcical(Test).analyze();
         TOKEN.add(new Token(SymbolType.CODEEND,null,0));
-        for (Token token:TOKEN
-        ) {
-            System.out.println(token.getSymbolType()+" "+token.getValue());
-        }
+//         for (Token token:TOKEN
+//         ) {
+//             System.out.println(token.getSymbolType()+" "+token.getValue());
+//         }
         ASTRoot = new Gramma(TOKEN).analyze();
 
-        printTree p = new printTree();
-        p.print(ASTRoot,0);
+//         printTree p = new printTree();
+//         p.print(ASTRoot,0);
 
         new Semantic().analyze(ASTRoot,0);
 //        BlockPrint(BlockMap.getBlockMap());
