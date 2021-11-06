@@ -335,7 +335,7 @@ public class TargetCodeGenerator {
         while (p < Node.getNodeList().size()) {
             if (List.get(p).getToken().getSymbolType() == SymbolType.MULT) {
                 regValue temp = UnaryExp(List.get(++p), blockID);
-                TargetCode.add("%" + (++regPoint) + " = miv i32 " + reg.print() + ", " + temp.print());
+                System.out.println("%" + (++regPoint) + " = mul i32 " + reg.print() + ", " + temp.print());
                 reg = new regValue(regPoint, true);
             } else if (List.get(p).getToken().getSymbolType() == SymbolType.DIV) {
                 regValue temp = UnaryExp(List.get(++p), blockID);
