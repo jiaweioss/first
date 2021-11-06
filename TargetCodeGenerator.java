@@ -385,7 +385,7 @@ public class TargetCodeGenerator {
             reg = new regValue(regPoint, true);
         }
         if (att == -1) {
-            TargetCode.add("%" + (++regPoint) + " = icmp eq i1 " + reg.print() + ", 0");
+            TargetCode.add("%" + (++regPoint) + " = icmp eq i32 " + reg.print() + ", 0");
             TargetCode.add("%" + (regPoint+1) + " = zext i1 %" + regPoint + " to i32");
             regPoint++;
             reg = new regValue(regPoint, true);
