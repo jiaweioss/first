@@ -36,7 +36,7 @@ public class main {
 //         System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
-        System.out.printlen(Test);
+        System.out.println(Test);
         //词法分析程序
         TOKEN = new Lexcical(Test).analyze();
         TOKEN.add(new Token(SymbolType.CODEEND,null,0));
