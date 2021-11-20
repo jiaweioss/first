@@ -148,7 +148,11 @@ public class TargetCodeGenerator {
         }
         if (Node.getNodeList().size() == 3) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
-            TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
+            if(key.globle == 1){
+                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* @" + register.get(key));
+            }else{
+                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
+            }
         }
     }
 
@@ -166,8 +170,13 @@ public class TargetCodeGenerator {
             regPoint++;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("LVal")) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
-            TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
-                    + ", i32* %" + register.get(key));
+            if(key.globle == 1){
+                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
+                        + ", i32* @" + register.get(key));
+            }else{
+                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
+                        + ", i32* %" + register.get(key));
+            }
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("if")) {
 
             if (Node.getNodeList().size() <= 5) {
