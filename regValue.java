@@ -1,3 +1,5 @@
+import java.util.regex.Pattern;
+
 public class regValue {
     String value;
     Boolean type;
@@ -13,10 +15,21 @@ public class regValue {
     public String print() {
         String s;
         if (type) {
+            if(isInteger(value)){
                 s = "%" + value;
+            }else {
+                s = "@" + value;
+            }
+
         } else {
             s = value;
         }
         return s;
     }
+
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
 }
+
