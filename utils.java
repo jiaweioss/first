@@ -13,6 +13,9 @@ public class utils {
         while (!temp.Identifiers.containsKey(name)) {
             temp = temp.Father;
         }
+        if(temp.ID == 0){
+            temp.Identifiers.get(name).globle = 1;
+        }
         return temp.Identifiers.get(name);
     }
 }
