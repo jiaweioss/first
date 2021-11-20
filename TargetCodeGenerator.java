@@ -216,7 +216,7 @@ public class TargetCodeGenerator {
         String s = "";
         switch (Node.getToken().getValue()) {
             case ">=":
-                s = "seg";
+                s = "sge";
                 break;
             case "<=":
                 s = "sle";
