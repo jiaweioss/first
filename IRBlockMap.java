@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BlockMap {
+public class IRBlockMap {
     private final static HashMap<Integer,Block> Blocks = new HashMap<>();
 
-    private BlockMap(){
+    private IRBlockMap(){
     }
 
     public static HashMap<Integer,Block> getBlockMap(){

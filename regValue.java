@@ -1,19 +1,21 @@
 public class regValue {
-    Integer value;
+    String value;
     Boolean type;
 
+    String name;
     //type为true的时候表明为寄存器
-    public regValue(int value, boolean type) {
+    public regValue(String value, boolean type,String name) {
         this.type = type;
         this.value = value;
+        this.name = name;
     }
 
     public String print() {
         String s;
         if (type) {
-            s = "%" + value.toString();
+                s = "%" + value;
         } else {
-            s = value.toString();
+            s = value;
         }
         return s;
     }
