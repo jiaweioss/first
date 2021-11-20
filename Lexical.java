@@ -64,19 +64,19 @@ public class Lexical {
                 symbolType = Keyword.keywordMap.getOrDefault(temp.toString(), SymbolType.IDENT);
                 if(temp.toString().equals("getint")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("getint")==null)
-                    funcMap.getfuncMap().put("getint",new func("void","getint"));
+                    funcMap.getfuncMap().put("getint",new func("i32","getint"));
                     symbolType = SymbolType.GETINT;
                 }else if(temp.toString().equals("getch")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("getch")==null)
-                        funcMap.getfuncMap().put("getch",new func("void","getch"));
+                        funcMap.getfuncMap().put("getch",new func("i32","getch"));
                     symbolType = SymbolType.GETCH;
                 }else if(temp.toString().equals("putint")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("putint")==null)
-                        funcMap.getfuncMap().put("putint",new func("i32","putint"));
+                        funcMap.getfuncMap().put("putint",new func("void","putint"));
                     symbolType = SymbolType.PUTINT;
                 }else if(temp.toString().equals("putch")&&currentChar=='('){
                     if(funcMap.getfuncMap().get("putch")==null)
-                        funcMap.getfuncMap().put("putch",new func("i32","putch"));
+                        funcMap.getfuncMap().put("putch",new func("void","putch"));
                     symbolType = SymbolType.PUTCH;
                 }
                 setToken(temp.toString(), symbolType);
