@@ -220,10 +220,11 @@ public class TargetCodeGenerator {
             TargetCode.add("br label %" + (++regPoint));
             TargetCode.add("");
             TargetCode.add(regPoint + ":");
+            int hold = regPoint;
             TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
 
-            whileBlock latest = new whileBlock(this.whileBlock,regPoint);
-            this.whileBlock = latest;
+
+            this.whileBlock = new whileBlock(this.whileBlock,regPoint);
 
 
             mark = TargetCode.size();
@@ -236,7 +237,7 @@ public class TargetCodeGenerator {
                 TargetCode.set(i - 1, TargetCode.get(i - 1) + (regPoint));
             }
 
-            TargetCode.add("br label %" + (regPoint));
+            TargetCode.add("br label %" + (hold));
             TargetCode.add("");
             TargetCode.add(regPoint + ":");
 
