@@ -423,8 +423,38 @@ public class Grammar {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
                 break;
+            case BREAKTK:
+            case CONTINUETK:
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+                if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                break;
             case LBRACE:
                 Node.addNode(Block());
+                break;
+            case WHILETK:
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+                if (currentToken.getSymbolType() == SymbolType.LPARENT) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("Stmt:;没了");
+                }
+                Node.addNode(Cond());
+                if (currentToken.getSymbolType() == SymbolType.RPARENT) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    System.out.println(currentToken.getValue());
+                    throw new ERR("Stmt:;没了");
+                }
+                Node.addNode(Stmt());
                 break;
             case IFTK:
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));

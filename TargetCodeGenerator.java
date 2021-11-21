@@ -4,7 +4,7 @@ import java.util.HashMap;
 public class TargetCodeGenerator {
 
     int BID;
-    Block block;
+    whileBlock whileBlock;
     //虚拟寄存器与变量的对应表
     HashMap<Identifier, String> register;
     //当前的虚拟寄存器编号
@@ -17,6 +17,7 @@ public class TargetCodeGenerator {
         this.regPoint = 0;
         register = new HashMap<>();
         this.BID = 0;
+        this.whileBlock = new whileBlock(null,0);
     }
 
     boolean checkHas(ASTNode Node, int blockID) {
@@ -148,9 +149,9 @@ public class TargetCodeGenerator {
         }
         if (Node.getNodeList().size() == 3) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
-            if(key.globle == 1){
+            if (key.globle == 1) {
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* @" + register.get(key));
-            }else{
+            } else {
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
             }
         }
@@ -170,10 +171,10 @@ public class TargetCodeGenerator {
             regPoint++;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("LVal")) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
-            if(key.globle == 1){
+            if (key.globle == 1) {
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* @" + register.get(key));
-            }else{
+            } else {
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + register.get(key));
             }
@@ -213,9 +214,43 @@ public class TargetCodeGenerator {
             }
 
 
+        } else if (Node.getNodeList().get(0).getToken().getValue().equals("while")) {
+
+            int mark;
+            TargetCode.add("br label %" + (++regPoint));
+            TargetCode.add("");
+            TargetCode.add(regPoint + ":");
+            TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
+
+            whileBlock latest = new whileBlock(this.whileBlock,regPoint);
+            this.whileBlock = latest;
+
+
+            mark = TargetCode.size();
+            TargetCode.add("");
+            TargetCode.add(regPoint + ":");
+            printStmt(Node.getNodeList().get(4), blockID);
+            TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
+
+            for(int i: whileBlock.breakLocate){
+                TargetCode.set(i - 1, TargetCode.get(i - 1) + (regPoint));
+            }
+
+            TargetCode.add("br label %" + (regPoint));
+            TargetCode.add("");
+            TargetCode.add(regPoint + ":");
+
+            this.whileBlock = whileBlock.Father;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("Block")) {
             printTargetCode(Node.getNodeList().get(0), blockID++);
-        } else {
+        }
+        else if(Node.getNodeList().get(0).getToken().getValue().equals("continue")){
+            TargetCode.add("br label %" + this.whileBlock.blockPoint);
+        }else if(Node.getNodeList().get(0).getToken().getValue().equals("break")){
+            TargetCode.add("br label %");
+            this.whileBlock.breakLocate.add(TargetCode.size());
+        }
+        else {
 //                System.out.println(Node.getNodeList().get(0).getToken().getValue());
             printExp(Node.getNodeList().get(0), blockID);
         }
@@ -245,7 +280,6 @@ public class TargetCodeGenerator {
         }
         return s;
     }
-
 
     public regValue printCond(ASTNode Node, Integer blockID) throws ERR {
         return printLorExp(Node.getNodeList().get(0), blockID);
