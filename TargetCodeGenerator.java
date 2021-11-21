@@ -67,6 +67,9 @@ public class TargetCodeGenerator {
                     ident.value = 0;
                 }
                 TargetCode.add("@" + ident.name + " = dso_local global i32 " + ident.value);
+            }else {
+                IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
+                        ident);
             }
         }
     }
@@ -247,9 +250,13 @@ public class TargetCodeGenerator {
         }
         else if(Node.getNodeList().get(0).getToken().getValue().equals("continue")){
             TargetCode.add("br label %" + this.whileBlock.blockPoint);
+            regPoint++;
         }else if(Node.getNodeList().get(0).getToken().getValue().equals("break")){
             TargetCode.add("br label %");
+            regPoint++;
             this.whileBlock.breakLocate.add(TargetCode.size());
+        }else if(Node.getNodeList().get(0).getToken().getValue().equals(";")){
+
         }
         else {
 //                System.out.println(Node.getNodeList().get(0).getToken().getValue());
