@@ -404,20 +404,33 @@ public class Grammar {
                 }
                 break;
             case IDENT:
-                Node.addNode(LVal());
-                if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
-                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
-                    nextToken();
+
+                if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN) {
+                    Node.addNode(LVal());
+                    if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
+                        Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                        nextToken();
+                    } else {
+                        throw new ERR("Stmt:=");
+                    }
+                    Node.addNode(Exp());
+                    if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                        Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                        nextToken();
+                    } else {
+                        throw new ERR("Stmt:;没了");
+                    }
                 } else {
-                    throw new ERR("Stmt:=");
+                    Node.addNode(Exp());
+                    if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                        Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                        nextToken();
+                    } else {
+                        throw new ERR("Stmt:;没了");
+                    }
                 }
-                Node.addNode(Exp());
-                if (currentToken.getSymbolType() == SymbolType.SEMICN) {
-                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
-                    nextToken();
-                } else {
-                    throw new ERR("Stmt:;没了");
-                }
+
+
                 break;
             case SEMICN:
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
@@ -619,7 +632,7 @@ public class Grammar {
             }
         } else {
             while (currentToken.getSymbolType() == SymbolType.PLUS
-                    || currentToken.getSymbolType() == SymbolType.MINU|| currentToken.getSymbolType() == SymbolType.NOT) {
+                    || currentToken.getSymbolType() == SymbolType.MINU || currentToken.getSymbolType() == SymbolType.NOT) {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
             }
