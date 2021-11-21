@@ -195,10 +195,11 @@ public class Lexical {
                         if (preRead() == '=') {
                             nextChar();
                             symbolType = SymbolType.GEQ;
+                            setToken(">=", symbolType);
                         } else {
                             symbolType = SymbolType.GRE;
+                            setToken(">", symbolType);
                         }
-                        setToken(">=", symbolType);
                         break;
                     case '=':
                         if (preRead() == '=') {
