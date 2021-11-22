@@ -767,7 +767,7 @@ public class TargetCodeGenerator {
     public int PrimaryExp(ASTNode Node, int blockID) throws ERR {
         int p = 0;
         ArrayList<ASTNode> List = Node.getNodeList();
-        if (List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
+        if (List.get(0).getNodeList().size()>1&&List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
             return calcuExp(List.get(p + 1), blockID);
         } else if (List.get(0).getToken().getValue().equals("LVal")) {
             ASTNode Ident = List.get(0).getNodeList().get(0).getNodeList().get(0);
