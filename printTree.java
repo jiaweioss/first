@@ -28,6 +28,5 @@ public class printTree {
                 col.set(level + 1, 0);
             print(node, level + 1);
         }
-
     }
 }

@@ -128,6 +128,8 @@ public class TargetCodeGenerator {
             result.append("i32");
             result.append("]".repeat(Math.max(0, Dimension.size() - 1)));
             result.append(" zeroinitializer");
+        } else {
+            result = printArrayDimen(Dimension, arrayValue, 0);
         }
         return result.toString();
     }
@@ -172,50 +174,157 @@ public class TargetCodeGenerator {
 
     private void ConstDef(ASTNode Node, int blockID) throws ERR {
         ASTNode Ident = Node.getNodeList().get(0);
+        String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
         if (!checkHas(Ident.getNodeList().get(0), blockID)) {
-            String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
-            IRBlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
-                    new Identifier(ConstInitVal(Node.getNodeList().get(2), blockID),
-                            IdentName,
-                            IdentType.Constant));
+
+            if (Node.getNodeList().get(1).getToken().getValue().equals("[")) {
+                IRBlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName));
+
+                Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
+                this.regPoint++;
+
+                TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
+                        " %" + register.get(ident) + ", i32 0" + ", i32 0");
+                AllocaArray(ArrayCutHead(ident.Dimension), ident.arrayValue, 0);
+
+            } else {
+                IRBlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
+                        new Identifier(ConstInitVal(Node.getNodeList().get(2), blockID),
+                                IdentName,
+                                IdentType.Constant));
+            }
         } else {
             throw new ERR("常量定义重复");
         }
     }
 
+    public ArrayList<Integer> ArrayCutHead(ArrayList<Integer> array) {
+        ArrayList<Integer> temp = new ArrayList<>();
+        for (int i = 1; i < array.size(); i++) {
+            temp.add(array.get(i));
+        }
+        return temp;
+    }
+
+    public void AllocaArray(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue, int point) {
+
+
+        if (Dimension.size() <= 2) {
+            TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
+            for (int i = 1; i < arrayValue.size(); i++) {
+                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + (i));
+                TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
+            }
+        } else {
+            for (int i = 1; i <= Dimension.get(0); i++) {
+                TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
+                        " %" + (regPoint++) + ", i32 0" + ", i32 0");
+                AllocaArray(ArrayCutHead(Dimension), arrayValue, point);
+            }
+        }
+
+    }
+
     //给变量分配空间
     public void printIdentifier(Integer Id) {
+
         Block block = BlockMap.getBlockMap().get(Id);
         for (Identifier ident : block.Identifiers.values()
         ) {
             if (ident.type == IdentType.Variable) {
                 this.regPoint++;
                 this.register.put(ident, regPoint.toString());
-                TargetCode.add("%" + regPoint + " = alloca i32");
+                TargetCode.add("%" + regPoint + " = alloca i32" + printArrayType(ident.Dimension));
 
+            } else if (ident.type == IdentType.Constant && ident.Dimension.size() > 1) {
+                this.regPoint++;
+                this.register.put(ident, regPoint.toString());
+
+                TargetCode.add("%" + regPoint + " = alloca i32 " + printArrayType(ident.Dimension));
             }
         }
     }
 
+    public StringBuilder printArrayType(ArrayList<Integer> dimension) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 1; i < dimension.size(); i++) {
+            result.append("[").append(dimension.get(i)).append(" x ");
+        }
+        result.append("i32");
+        result.append("]".repeat(Math.max(0, dimension.size() - 1)));
+        return result;
+    }
+
     //输出变量定义的中间代码(int a=3)
     public void printVarDef(ASTNode Node, Integer blockID) throws ERR {
-
+        String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
         if (!IRBlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
-            String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+
             IRBlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName));
 
-//            System.out.println(IdentName+BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName));
         } else {
             throw new ERR("变量定义重复");
         }
-        if (Node.getNodeList().size() == 3) {
-            Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
-            if (key.globle == 1) {
-                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* @" + register.get(key));
+
+        if (Node.getNodeList().get(Node.getNodeList().size() - 2).getToken().getValue().equals("=")) {
+            if (Node.getNodeList().get(1).getToken().getValue().equals("[")) {
+                Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
+
+                ident.arrayValue = ConstInitValArray(Node.getNodeList().get(Node.getNodeList().size() - 1), ident.Dimension, blockID, "InitVal");
+                this.regPoint++;
+                TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
+                        " %" + register.get(ident) + ", i32 0" + ", i32 0");
+                AllocaArray(ArrayCutHead(ident.Dimension), ident.arrayValue, 0);
+
             } else {
-                TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
+                Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
+                if (key.globle == 1) {
+                    TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* @" + register.get(key));
+                } else {
+                    TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
+                }
             }
         }
+    }
+
+    public ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId, String type) throws ERR {
+        ArrayList<Integer> answer = new ArrayList<>();
+        ArrayList<Integer> newDimen = new ArrayList<>();
+        Integer childDimen = 1;
+
+        for (int i = 1; i < dimen.size(); i++) {
+            newDimen.add(dimen.get(i));
+            childDimen *= dimen.get(i);
+        }
+        childDimen /= dimen.get(1);
+
+
+        int temp = 0;
+        if (dimen.size() <= 2) {
+            for (ASTNode node : Node.getNodeList()) {
+                if (node.getToken().getValue().equals(type)) {
+                    answer.add(ConstInitVal(node, blockId));
+                    temp++;
+                }
+
+            }
+            for (int i = temp; i < dimen.get(1); i++) {
+                answer.add(0);
+            }
+        } else {
+            for (ASTNode node : Node.getNodeList()) {
+                if (node.getToken().getValue().equals(type)) {
+                    answer.addAll(ConstInitValArray(node, newDimen, blockId, type));
+                    temp++;
+                }
+            }
+
+            for (int i = temp; i < dimen.get(1); i++) {
+                for (int k = 0; k < childDimen; k++)
+                    answer.add(0);
+            }
+        }
+        return answer;
     }
 
     //输出函数定义的中间代码(int main())
@@ -540,6 +649,7 @@ public class TargetCodeGenerator {
     }
 
     public regValue printPrimaryExp(ASTNode Node, Integer blockID) throws ERR {
+
         int p = 0;
         regValue reg;
         ArrayList<ASTNode> List = Node.getNodeList();
@@ -549,9 +659,9 @@ public class TargetCodeGenerator {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
 
             if (key.Dimension.size() > 1) {
-                reg = new regValue(register.get(key), true, null);
+
+                reg = new regValue(register.get(key), true, key.name);
                 StringBuilder locate = new StringBuilder();
-                StringBuilder result = new StringBuilder();
 
                 int point = 2;
                 locate.append(", i32 0");
@@ -560,13 +670,10 @@ public class TargetCodeGenerator {
                     point += 3;
                 }
 
-                for (int i = 1; i < key.Dimension.size(); i++) {
-                    result.append("[").append(key.Dimension.get(i)).append(" x ");
-                }
-                result.append("i32");
-                result.append("]".repeat(Math.max(0, key.Dimension.size() - 1)));
+                locate.append("]");
                 regPoint++;
-                TargetCode.add("%" + regPoint + " = getelementptr " + result.toString() + ", " + result.toString() + "* " + reg.print() + locate.toString());
+
+                TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
                 reg = new regValue(regPoint.toString(), true, null);
 
 
@@ -665,7 +772,18 @@ public class TargetCodeGenerator {
         } else if (List.get(0).getToken().getValue().equals("LVal")) {
             ASTNode Ident = List.get(0).getNodeList().get(0).getNodeList().get(0);
             if (checkHas(Ident, blockID)) {
-                return IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue()).value;
+                if (List.get(0).getNodeList().get(1).getToken().getValue().equals("[")) {
+                    Identifier ident = IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue());
+                    int locate = 0;
+                    for(int i=1;i<ident.Dimension.size();i++){
+                        System.out.println(calcuExp(List.get(0).getNodeList().get(3*i-1),blockID));
+                        locate+=calcuExp(List.get(0).getNodeList().get(3*i-1),blockID)*calcuDimen(i,ident.Dimension);
+                    }
+                    return ident.arrayValue.get(locate);
+                } else {
+                    return IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue()).value;
+                }
+
             } else {
                 throw new ERR("PrimaryExp");
             }
@@ -682,6 +800,14 @@ public class TargetCodeGenerator {
         } else {
             return Integer.parseInt(Node.getToken().getValue());
         }
+    }
+
+    public int calcuDimen(int i,ArrayList<Integer> dimension){
+        int answer = 1;
+        for(int k=i+1;k<dimension.size();k++){
+            answer*=dimension.get(k);
+        }
+        return answer;
     }
 }
 

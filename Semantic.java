@@ -109,7 +109,7 @@ public class Semantic {
         }
     }
 
-    private ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId,String type) throws ERR {
+    public ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId,String type) throws ERR {
         ArrayList<Integer> answer = new ArrayList<>();
         ArrayList<Integer> newDimen = new ArrayList<>();
         Integer childDimen = 1;
