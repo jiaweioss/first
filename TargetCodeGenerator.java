@@ -17,7 +17,7 @@ public class TargetCodeGenerator {
         this.regPoint = 0;
         register = new HashMap<>();
         this.BID = 0;
-        this.whileBlock = new whileBlock(null,0);
+        this.whileBlock = new whileBlock(null, 0);
     }
 
     boolean checkHas(ASTNode Node, int blockID) {
@@ -58,20 +58,50 @@ public class TargetCodeGenerator {
         Block block = BlockMap.getBlockMap().get(0);
         for (Identifier ident : block.Identifiers.values()
         ) {
-            if (ident.type == IdentType.Variable) {
+            if (ident.Dimension.size() == 1) {
+                if (ident.type == IdentType.Variable) {
 
-                this.register.put(ident, ident.name);
-                IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
-                        ident);
-                if (ident.value == null) {
-                    ident.value = 0;
+                    this.register.put(ident, ident.name);
+                    IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
+                            ident);
+                    if (ident.value == null) {
+                        ident.value = 0;
+                    }
+                    TargetCode.add("@" + ident.name + " = dso_local global i32 " + ident.value);
+                } else {
+                    IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
+                            ident);
                 }
-                TargetCode.add("@" + ident.name + " = dso_local global i32 " + ident.value);
-            }else {
-                IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
-                        ident);
+            } else {
+                if (ident.type == IdentType.Variable) {
+
+                    this.register.put(ident, ident.name);
+                    IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
+                            ident);
+                    TargetCode.add("@" + ident.name + " = dso_local global" + arrayInit(ident.Dimension, ident.arrayValue));
+                } else {
+                    this.register.put(ident, ident.name);
+                    IRBlockMap.getBlockMap().get(0).Identifiers.put(ident.name,
+                            ident);
+                    TargetCode.add("@" + ident.name + " = dso_local constant" + arrayInit(ident.Dimension, ident.arrayValue));
+                }
             }
+
         }
+    }
+
+    public String arrayInit(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue) {
+        StringBuilder result = new StringBuilder();
+
+        if(arrayValue.size()==0){
+            return " zeroinitializer";
+        }
+
+
+        for (Integer i : arrayValue) {
+            result.append(" " + i.toString());
+        }
+        return result.toString();
     }
 
     public void defFunc() {
@@ -227,7 +257,7 @@ public class TargetCodeGenerator {
             TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
 
 
-            this.whileBlock = new whileBlock(this.whileBlock,regPoint);
+            this.whileBlock = new whileBlock(this.whileBlock, regPoint);
 
 
             mark = TargetCode.size();
@@ -236,7 +266,7 @@ public class TargetCodeGenerator {
             printStmt(Node.getNodeList().get(4), blockID);
             TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
 
-            for(int i: whileBlock.breakLocate){
+            for (int i : whileBlock.breakLocate) {
                 TargetCode.set(i - 1, TargetCode.get(i - 1) + (regPoint));
             }
 
@@ -247,18 +277,16 @@ public class TargetCodeGenerator {
             this.whileBlock = whileBlock.Father;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("Block")) {
             printTargetCode(Node.getNodeList().get(0), blockID++);
-        }
-        else if(Node.getNodeList().get(0).getToken().getValue().equals("continue")){
+        } else if (Node.getNodeList().get(0).getToken().getValue().equals("continue")) {
             TargetCode.add("br label %" + this.whileBlock.blockPoint);
             regPoint++;
-        }else if(Node.getNodeList().get(0).getToken().getValue().equals("break")){
+        } else if (Node.getNodeList().get(0).getToken().getValue().equals("break")) {
             TargetCode.add("br label %");
             regPoint++;
             this.whileBlock.breakLocate.add(TargetCode.size());
-        }else if(Node.getNodeList().get(0).getToken().getValue().equals(";")){
+        } else if (Node.getNodeList().get(0).getToken().getValue().equals(";")) {
 
-        }
-        else {
+        } else {
 //                System.out.println(Node.getNodeList().get(0).getToken().getValue());
             printExp(Node.getNodeList().get(0), blockID);
         }

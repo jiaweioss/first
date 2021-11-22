@@ -6,13 +6,14 @@ public class Identifier {
     IdentType type;
     Integer globle;
 
-    ArrayList<Integer> Dimension;
-    ArrayList<Integer> arrayValue;
+    ArrayList<Integer> Dimension = new ArrayList<>();
+    ArrayList<Integer> arrayValue = new ArrayList<>();
     public Identifier(Integer value, String name,IdentType type){
         this.globle = 0;
         this.value = value;
         this.name = name;
         this.type = type;
+
         this.Dimension.add(0);
     }
 

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Semantic {
 
@@ -71,56 +72,126 @@ public class Semantic {
     private void ConstDef(ASTNode Node, int blockID) throws ERR {
 
         if (!BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
-            
-            if(Node.getNodeList().get(0).getNodeList().get(1).getToken().getValue().equals("[")){
-                String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+
+            String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+            ArrayList<ASTNode> List = Node.getNodeList();
+            if (List.get(1).getToken().getValue().equals("[")) {
                 Identifier arrayName = new Identifier(0,
-                            IdentName,
-                            IdentType.Constant);
+                        IdentName,
+                        IdentType.Constant);
                 int temp = 1;
-                int dimen = 1;
-                while(Node.getNodeList().get(0).getNodeList().get(temp).getToken().getValue().equals("[")){
-                    arrayName.Dimension.add(ConstExp(Node.getNodeList().get(0).getNodeList().get(temp),blockID));
-                    temp+=2;
+                int dimen = 0;
+                while (temp < List.size() && List.get(temp).getToken().getValue().equals("[")) {
+                    arrayName.Dimension.add(ConstExp(List.get(temp + 1), blockID));
+                    temp += 3;
                     dimen++;
                 }
-                
 
-            }else{
-                String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
-            BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
-                    new Identifier(ConstInitVal(Node.getNodeList().get(2), blockID),
-                            IdentName,
-                            IdentType.Constant));
+                if (!List.get(temp).getToken().getValue().equals("=")) {
+                    System.out.println();
+                    throw new ERR("ConstDef");
+                } else {
+                    temp += 1;
+                }
+
+                arrayName.arrayValue = ConstInitValArray(List.get(temp), arrayName.Dimension, blockID,"ConstInitVal");
+                BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, arrayName);
+            } else {
+                BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
+                        new Identifier(ConstInitVal(Node.getNodeList().get(2), blockID),
+                                IdentName,
+                                IdentType.Constant));
             }
-            
-            
+
+
         } else {
             throw new ERR("常量定义重复");
         }
     }
 
+    private ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId,String type) throws ERR {
+        ArrayList<Integer> answer = new ArrayList<>();
+        ArrayList<Integer> newDimen = new ArrayList<>();
+        Integer childDimen = 1;
+
+
+        for (int i = 1; i < dimen.size(); i++) {
+            newDimen.add(dimen.get(i));
+            childDimen *= dimen.get(i);
+        }
+        childDimen /= dimen.get(1);
+
+
+        int temp = 0;
+        if (dimen.size() <= 2) {
+            for (ASTNode node : Node.getNodeList()) {
+                if (node.getToken().getValue().equals(type)) {
+                    answer.add(ConstInitVal(node, blockId));
+                    temp++;
+                }
+
+            }
+            for (int i = temp; i < dimen.get(1); i++) {
+                answer.add(0);
+            }
+        } else {
+            for (ASTNode node : Node.getNodeList()) {
+                if (node.getToken().getValue().equals(type)) {
+                    answer.addAll(ConstInitValArray(node, newDimen, blockId, type));
+                    temp++;
+                }
+            }
+
+            for (int i = temp; i < dimen.get(1); i++) {
+                for (int k = 0; k < childDimen;k++)
+                    answer.add(0);
+            }
+        }
+        return answer;
+    }
+
+
     private void VarDef(ASTNode Node, int blockID) throws ERR {
 
         if (!BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
             String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
-
-            if (blockID == 0) {
-                int value = 0;
-                for (ASTNode node : Node.getNodeList()) {
-                    if (node.getToken().getValue().equals("InitVal")) {
-                        value = ConstInitVal(node, blockID);
-                    }
-
+            ArrayList<ASTNode> List = Node.getNodeList();
+            if (List.get(1).getToken().getValue().equals("[")) {
+                Identifier arrayName = new Identifier(0,
+                        IdentName,
+                        IdentType.Variable);
+                int temp = 1;
+                while (temp<List.size()&&List.get(temp).getToken().getValue().equals("[")) {
+                    arrayName.Dimension.add(ConstExp(List.get(temp + 1), blockID));
+                    temp += 3;
                 }
-                BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
-                        new Identifier(value, IdentName,
-                                IdentType.Variable));
+                if (blockID == 0) {
+                    if (temp<List.size()&&List.get(temp).getToken().getValue().equals("=")) {
+                        temp += 1;
+                        arrayName.arrayValue = ConstInitValArray(List.get(temp),arrayName.Dimension,blockID,"InitVal");
+                    }
+                }
+                BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, arrayName);
+
             } else {
-                BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
-                        new Identifier(null, IdentName,
-                                IdentType.Variable));
+                if (blockID == 0) {
+                    int value = 0;
+                    for (ASTNode node : Node.getNodeList()) {
+                        if (node.getToken().getValue().equals("InitVal")) {
+                            value = ConstInitVal(node, blockID);
+                        }
+
+                    }
+                    BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
+                            new Identifier(value, IdentName,
+                                    IdentType.Variable));
+                } else {
+                    BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
+                            new Identifier(null, IdentName,
+                                    IdentType.Variable));
+                }
             }
+
 
         } else {
             throw new ERR("变量定义重复");

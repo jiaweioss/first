@@ -229,11 +229,11 @@ public class Lexical {
                         break;
                     case '[':
                         symbolType = SymbolType.LBRACK;
-                        setToken("]", symbolType);
+                        setToken("[", symbolType);
                         break;
                     case ']':
                         symbolType = SymbolType.RBRACK;
-                        setToken("[", symbolType);
+                        setToken("]", symbolType);
                         break;
                     case '{':
                         symbolType = SymbolType.LBRACE;

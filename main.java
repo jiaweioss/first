@@ -29,11 +29,11 @@ public class main {
     public static void main(String[] args) throws IOException, ERR {
         ArrayList<Token> TOKEN = new ArrayList<>();
         ASTNode ASTRoot;
-//         String pathname = ".\\test.txt";
-       String pathname = args[0];
+         String pathname = ".\\test.txt";
+//       String pathname = args[0];
 
-       PrintStream ps = new PrintStream(args[1]);
-       System.setOut(ps);
+//       PrintStream ps = new PrintStream(args[1]);
+//       System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
         //词法分析程序
@@ -41,14 +41,14 @@ public class main {
         TOKEN.add(new Token(SymbolType.CODEEND, null, 0));
 
         ASTRoot = new Grammar(TOKEN).analyze();
-       for (Token token : TOKEN
-       ) {
-           System.out.println(token.getSymbolType() + " " + token.getValue());
-       }
+//       for (Token token : TOKEN
+//       ) {
+//           System.out.println(token.getSymbolType() + " " + token.getValue());
+//       }
        printTree p = new printTree();
        p.print(ASTRoot, 0);
         new Semantic().analyze(ASTRoot, 0);
-//
+
 //                BlockPrint(BlockMap.getBlockMap());
 
 
@@ -64,7 +64,7 @@ public class main {
             System.out.println(b.ID);
             for (Identifier ident : b.Identifiers.values()
             ) {
-                System.out.println(ident.name + " " + ident.value);
+                System.out.println(ident.name + " " + ident.Dimension.size());
             }
 
         }
