@@ -234,7 +234,7 @@ public class TargetCodeGenerator {
             if (ident.type == IdentType.Variable) {
                 this.regPoint++;
                 this.register.put(ident, regPoint.toString());
-                TargetCode.add("%" + regPoint + " = alloca i32" + printArrayType(ident.Dimension));
+                TargetCode.add("%" + regPoint + " = alloca i32 " + printArrayType(ident.Dimension));
 
             } else if (ident.type == IdentType.Constant && ident.Dimension.size() > 1) {
                 this.regPoint++;
