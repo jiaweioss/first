@@ -46,8 +46,8 @@ public class main {
 //       ) {
 //           System.out.println(token.getSymbolType() + " " + token.getValue());
 //       }
-       printTree p = new printTree();
-       p.print(ASTRoot, 0);
+//        printTree p = new printTree();
+//        p.print(ASTRoot, 0);
         new Semantic().analyze(ASTRoot, 0);
 
 //                BlockPrint(BlockMap.getBlockMap());
