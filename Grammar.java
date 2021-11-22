@@ -5,7 +5,7 @@ public class Grammar {
     private int Point;
     private Token currentToken;
     private final ArrayList<Token> Tokens;
-    
+
     private void nextToken() {
         if (this.Point < this.Tokens.size()) {
             this.currentToken = this.Tokens.get(Point);
@@ -394,7 +394,7 @@ public class Grammar {
                 break;
             case IDENT:
 
-                if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN) {
+                if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN||Tokens.get(Point).getSymbolType() == SymbolType.LBRACK) {
                     Node.addNode(LVal());
                     if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
                         Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
@@ -409,7 +409,7 @@ public class Grammar {
                     } else {
                         throw new ERR("Stmt:;没了");
                     }
-                } else {
+                }else {
                     Node.addNode(Exp());
                     if (currentToken.getSymbolType() == SymbolType.SEMICN) {
                         Node.addNode(new ASTNode(currentToken, new ArrayList<>()));

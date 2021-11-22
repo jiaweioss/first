@@ -266,7 +266,7 @@ public class TargetCodeGenerator {
             throw new ERR("变量定义重复");
         }
 
-        if (Node.getNodeList().get(Node.getNodeList().size() - 2).getToken().getValue().equals("=")) {
+        if (Node.getNodeList().size()>=2&&Node.getNodeList().get(Node.getNodeList().size() - 2).getToken().getValue().equals("=")) {
             if (Node.getNodeList().get(1).getToken().getValue().equals("[")) {
                 Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
 

@@ -156,7 +156,8 @@ public class Semantic {
         if (!BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
             String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
             ArrayList<ASTNode> List = Node.getNodeList();
-            if (List.get(1).getToken().getValue().equals("[")) {
+
+            if (List.size()>1&&List.get(1).getToken().getValue().equals("[")) {
                 Identifier arrayName = new Identifier(0,
                         IdentName,
                         IdentType.Variable);
