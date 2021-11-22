@@ -90,16 +90,44 @@ public class TargetCodeGenerator {
         }
     }
 
+    public StringBuilder printArrayDimen(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue, Integer point) {
+        StringBuilder result = new StringBuilder();
+
+        ArrayList<Integer> newDimen = new ArrayList<>();
+        for (int i = 1; i < Dimension.size(); i++) {
+            result.append("[").append(Dimension.get(i)).append(" x ");
+            newDimen.add(Dimension.get(i));
+        }
+        result.append("i32");
+        result.append("]".repeat(Math.max(0, Dimension.size() - 1)));
+        result.append(" [");
+
+        if (Dimension.size() <= 2) {
+            result.append("i32 ").append(arrayValue.get(point++));
+            for (int i = 1; i < Dimension.get(1); i++) {
+                result.append(",").append("i32 ").append(arrayValue.get(point++));
+            }
+        } else {
+            result.append(printArrayDimen(newDimen, arrayValue, point++));
+            for (int i = 1; i < Dimension.get(1); i++) {
+                result.append(",").append(printArrayDimen(newDimen, arrayValue, point++));
+            }
+        }
+        result.append("]");
+        return result;
+    }
+
     public String arrayInit(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue) {
         StringBuilder result = new StringBuilder();
 
-        if(arrayValue.size()==0){
-            return " zeroinitializer";
-        }
-
-
-        for (Integer i : arrayValue) {
-            result.append(" " + i.toString());
+        if (arrayValue.size() == 0) {
+            result.append(" ");
+            for (int i = 1; i < Dimension.size(); i++) {
+                result.append("[").append(Dimension.get(i)).append(" x ");
+            }
+            result.append("i32");
+            result.append("]".repeat(Math.max(0, Dimension.size() - 1)));
+            result.append(" zeroinitializer");
         }
         return result.toString();
     }
@@ -518,19 +546,40 @@ public class TargetCodeGenerator {
         if (List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
             return printExp(List.get(p + 1), blockID);
         } else if (List.get(0).getToken().getValue().equals("LVal")) {
-
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
 
-
-            if (key.type == IdentType.Variable) {
+            if (key.Dimension.size() > 1) {
                 reg = new regValue(register.get(key), true, null);
-                regPoint++;
-                TargetCode.add("%" + regPoint + " = load i32, i32* " + reg.print());
-                reg = new regValue(regPoint.toString(), true, null);
-            } else {
-                reg = new regValue(key.value.toString(), false, null);
-            }
+                StringBuilder locate = new StringBuilder();
+                StringBuilder result = new StringBuilder();
 
+                int point = 2;
+                locate.append(", i32 0");
+                for (int i = 1; i < key.Dimension.size(); i++) {
+                    locate.append(", i32 ").append(calcuExp(List.get(0).getNodeList().get(point), blockID));
+                    point += 3;
+                }
+
+                for (int i = 1; i < key.Dimension.size(); i++) {
+                    result.append("[").append(key.Dimension.get(i)).append(" x ");
+                }
+                result.append("i32");
+                result.append("]".repeat(Math.max(0, key.Dimension.size() - 1)));
+                regPoint++;
+                TargetCode.add("%" + regPoint + " = getelementptr " + result.toString() + ", " + result.toString() + "* " + reg.print() + locate.toString());
+                reg = new regValue(regPoint.toString(), true, null);
+
+
+            } else {
+                if (key.type == IdentType.Variable) {
+                    reg = new regValue(register.get(key), true, null);
+                    regPoint++;
+                    TargetCode.add("%" + regPoint + " = load i32, i32* " + reg.print());
+                    reg = new regValue(regPoint.toString(), true, null);
+                } else {
+                    reg = new regValue(key.value.toString(), false, null);
+                }
+            }
         } else {
             reg = new regValue(Semantic.Number(List.get(0)).toString(), false, null);
         }
@@ -620,7 +669,6 @@ public class TargetCodeGenerator {
             } else {
                 throw new ERR("PrimaryExp");
             }
-
         } else {
             return Number(List.get(0));
         }

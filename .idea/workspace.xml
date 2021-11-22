@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="05b996a7-4b67-4763-890c-18fed994da72" name="Default Changelist" comment="" />
+    <list default="true" id="045da6e1-822c-4e94-b064-f8fc6a689c68" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/TargetCodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/TargetCodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/Grammar$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/Grammar$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/Grammar.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/Grammar.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/Identifier.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/Identifier.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/Lexical.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/Lexical.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/Semantic.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/Semantic.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/TargetCodeGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/TargetCodeGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/first/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/first/main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="21GJ6O7IA1vaIgNxaOTYlePgNVG" />
+  <component name="ProjectId" id="21GtbJNpkCZpQdvmqK0cN5zdaEd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -20,6 +30,12 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
   <component name="RunManager">
     <configuration name="main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -49,12 +65,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="05b996a7-4b67-4763-890c-18fed994da72" name="Default Changelist" comment="" />
-      <created>1637561319478</created>
+      <changelist id="045da6e1-822c-4e94-b064-f8fc6a689c68" name="Default Changelist" comment="" />
+      <created>1637579321990</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1637561319478</updated>
-      <workItem from="1637561323647" duration="113000" />
+      <updated>1637579321990</updated>
+      <workItem from="1637579324512" duration="5256000" />
     </task>
     <servers />
   </component>
