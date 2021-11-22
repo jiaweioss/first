@@ -776,7 +776,6 @@ public class TargetCodeGenerator {
                     Identifier ident = IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue());
                     int locate = 0;
                     for(int i=1;i<ident.Dimension.size();i++){
-                        System.out.println(calcuExp(List.get(0).getNodeList().get(3*i-1),blockID));
                         locate+=calcuExp(List.get(0).getNodeList().get(3*i-1),blockID)*calcuDimen(i,ident.Dimension);
                     }
                     return ident.arrayValue.get(locate);
