@@ -271,6 +271,7 @@ public class TargetCodeGenerator {
                 Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
 
                 ident.arrayValue = ConstInitValArray(Node.getNodeList().get(Node.getNodeList().size() - 1), ident.Dimension, blockID, "InitVal");
+
                 this.regPoint++;
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
                         " %" + register.get(ident) + ", i32 0" + ", i32 0");
@@ -284,6 +285,15 @@ public class TargetCodeGenerator {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
                 }
             }
+        }else {
+            Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
+
+            int temp =1;
+            for(int i=1;i<ident.Dimension.size();i++){
+                temp*=ident.Dimension.get(i);
+            }
+            for(int i=1;i<=temp;i++)
+            ident.arrayValue.add(0);
         }
     }
 
@@ -344,7 +354,9 @@ public class TargetCodeGenerator {
             if (key.globle == 1) {
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* @" + register.get(key));
+                key.value = calcuExp(Node.getNodeList().get(2),blockID);
             } else {
+                key.value = calcuExp(Node.getNodeList().get(2),blockID);
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + register.get(key));
             }
@@ -670,7 +682,8 @@ public class TargetCodeGenerator {
                     point += 3;
                 }
 
-                locate.append("]");
+
+
                 regPoint++;
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
@@ -767,20 +780,20 @@ public class TargetCodeGenerator {
     public int PrimaryExp(ASTNode Node, int blockID) throws ERR {
         int p = 0;
         ArrayList<ASTNode> List = Node.getNodeList();
-        if (List.get(0).getNodeList().size()>1&&List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
+        if (List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
             return calcuExp(List.get(p + 1), blockID);
         } else if (List.get(0).getToken().getValue().equals("LVal")) {
             ASTNode Ident = List.get(0).getNodeList().get(0).getNodeList().get(0);
             if (checkHas(Ident, blockID)) {
-                if (List.get(0).getNodeList().get(1).getToken().getValue().equals("[")) {
-                    Identifier ident = IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue());
+                if (List.get(0).getNodeList().size()>1&&List.get(0).getNodeList().get(1).getToken().getValue().equals("[")) {
+                    Identifier ident = utils.searchKey(Ident.getToken().getValue(),blockID);
                     int locate = 0;
                     for(int i=1;i<ident.Dimension.size();i++){
                         locate+=calcuExp(List.get(0).getNodeList().get(3*i-1),blockID)*calcuDimen(i,ident.Dimension);
                     }
                     return ident.arrayValue.get(locate);
                 } else {
-                    return IRBlockMap.getBlockMap().get(blockID).Identifiers.get(Ident.getToken().getValue()).value;
+                    return utils.searchKey(Ident.getToken().getValue(),blockID).value;
                 }
 
             } else {
