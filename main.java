@@ -29,11 +29,11 @@ public class main {
     public static void main(String[] args) throws IOException, ERR {
         ArrayList<Token> TOKEN = new ArrayList<>();
         ASTNode ASTRoot;
-//         String pathname = ".\\test.txt";
-       String pathname = args[0];
+        String pathname = ".\\test.txt";
+    //    String pathname = args[0];
 
-       PrintStream ps = new PrintStream(args[1]);
-       System.setOut(ps);
+    //    PrintStream ps = new PrintStream(args[1]);
+    //    System.setOut(ps);
 
         StringBuilder Test = new StringBuilder(Objects.requireNonNull(readToString(pathname)));
         //词法分析程序
