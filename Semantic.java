@@ -9,10 +9,6 @@ public class Semantic {
         this.BID = 0;
     }
 
-    private boolean checkToken(ASTNode Node, SymbolType type) {
-        return Node.getToken().getSymbolType() == type;
-    }
-
     private boolean checkValue(ASTNode Node, String value) {
         return Node.getToken().getValue().equals(value);
     }
@@ -73,12 +69,32 @@ public class Semantic {
     }
 
     private void ConstDef(ASTNode Node, int blockID) throws ERR {
+
         if (!BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
-            String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+            
+            if(Node.getNodeList().get(0).getNodeList().get(1).getToken().getValue().equals("[")){
+                String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+                Identifier arrayName = new Identifier(0,
+                            IdentName,
+                            IdentType.Constant);
+                int temp = 1;
+                int dimen = 1;
+                while(Node.getNodeList().get(0).getNodeList().get(temp).getToken().getValue().equals("[")){
+                    arrayName.Dimension.add(ConstExp(Node.getNodeList().get(0).getNodeList().get(temp),blockID));
+                    temp+=2;
+                    dimen++;
+                }
+                
+
+            }else{
+                String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
             BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
                     new Identifier(ConstInitVal(Node.getNodeList().get(2), blockID),
                             IdentName,
                             IdentType.Constant));
+            }
+            
+            
         } else {
             throw new ERR("常量定义重复");
         }

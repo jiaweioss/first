@@ -5,18 +5,7 @@ public class Grammar {
     private int Point;
     private Token currentToken;
     private final ArrayList<Token> Tokens;
-
-    private int hasNextToken() {
-        if (this.Point > this.Tokens.size()) {
-            return -1;
-        }
-        return 0;
-    }
-
-    private boolean checkToken(SymbolType symbol) {
-        return currentToken.getSymbolType() == symbol;
-    }
-
+    
     private void nextToken() {
         if (this.Point < this.Tokens.size()) {
             this.currentToken = this.Tokens.get(Point);
@@ -665,19 +654,6 @@ public class Grammar {
             Node.addNode(LVal());
         } else {
             throw new ERR("没有number");
-        }
-        return Node;
-    }
-
-    private ASTNode UnaryOp() throws ERR {
-        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "UnaryOp", 0), new ArrayList<>());
-        //
-        if (currentToken.getSymbolType() == SymbolType.PLUS
-                || currentToken.getSymbolType() == SymbolType.MINU) {
-            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
-            nextToken();
-        } else {
-            throw new ERR("+/-错误");
         }
         return Node;
     }
