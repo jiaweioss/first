@@ -184,7 +184,7 @@ public class TargetCodeGenerator {
                 this.regPoint++;
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
-                        " %" + register.get(ident) + ", i32 0" + ", i32 0");
+                        "* %" + register.get(ident) + ", i32 0" + ", i32 0");
                 AllocaArray(ArrayCutHead(ident.Dimension), ident.arrayValue, 0);
 
             } else {
@@ -356,8 +356,10 @@ public class TargetCodeGenerator {
                 reg = new regValue(register.get(key), true, key.name);
                 StringBuilder locate = new StringBuilder();
                 locate.append(", i32 0");
+                int point = 2;
                 for (int i = 1; i < key.Dimension.size(); i++) {
-                    locate.append(", i32 ");
+                    locate.append(", i32 ").append(printExp(Node.getNodeList().get(0).getNodeList().get(point), blockID).print());
+                    point += 3;
                 }
                 regPoint++;
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
