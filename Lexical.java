@@ -68,7 +68,7 @@ public class Lexical {
                     }
                     if (currentChar == '(') {
                         if (funcMap.getfuncMap().get("getint") == null)
-                            funcMap.getfuncMap().put("getint", new func("i32", "getint"));
+                            funcMap.getfuncMap().put("getint", new func("i32", "getint",new ArrayList<>()));
                         symbolType = SymbolType.GETINT;
                     }
 
@@ -78,7 +78,7 @@ public class Lexical {
                     }
                     if (currentChar == '(') {
                         if (funcMap.getfuncMap().get("getch") == null)
-                            funcMap.getfuncMap().put("getch", new func("i32", "getch"));
+                            funcMap.getfuncMap().put("getch", new func("i32", "getch",new ArrayList<>()));
                         symbolType = SymbolType.GETCH;
                     }
                 } else if (temp.toString().equals("putint")) {
@@ -86,8 +86,14 @@ public class Lexical {
                         nextChar();
                     }
                     if (currentChar == '(') {
-                        if (funcMap.getfuncMap().get("putint") == null)
-                            funcMap.getfuncMap().put("putint", new func("void", "putint"));
+                        if (funcMap.getfuncMap().get("putint") == null){
+                            ArrayList<Integer> dimen = new ArrayList<>();
+                            dimen.add(0);
+                            ArrayList<Params> param = new ArrayList<>();
+                            param.add(new Params(null,dimen));
+                            funcMap.getfuncMap().put("putint", new func("void", "putint",param));
+                        }
+
                         symbolType = SymbolType.PUTINT;
                     }
                 } else if (temp.toString().equals("putch")) {
@@ -95,8 +101,14 @@ public class Lexical {
                         nextChar();
                     }
                     if (currentChar == '(') {
-                        if (funcMap.getfuncMap().get("putch") == null)
-                            funcMap.getfuncMap().put("putch", new func("void", "putch"));
+                        if (funcMap.getfuncMap().get("putch") == null){
+                            ArrayList<Integer> dimen = new ArrayList<>();
+                            dimen.add(0);
+                            ArrayList<Params> param = new ArrayList<>();
+                            param.add(new Params(null,dimen));
+                            funcMap.getfuncMap().put("putch", new func("void", "putch",param));
+                        }
+
                         symbolType = SymbolType.PUTCH;
                     }
                 }

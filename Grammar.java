@@ -393,13 +393,18 @@ public class Grammar {
                 }
                 break;
             case IDENT:
-                if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN||Tokens.get(Point).getSymbolType() == SymbolType.LBRACK) {
+                if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN || Tokens.get(Point).getSymbolType() == SymbolType.LBRACK) {
                     Node.addNode(LVal());
                     if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
                         Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                         nextToken();
                     } else {
-                        throw new ERR("Stmt:=");
+                        if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                            nextToken();
+                        } else {
+                            throw new ERR("Stmt:;没了");
+                        }
                     }
                     Node.addNode(Exp());
                     if (currentToken.getSymbolType() == SymbolType.SEMICN) {
@@ -408,7 +413,7 @@ public class Grammar {
                     } else {
                         throw new ERR("Stmt:;没了");
                     }
-                }else {
+                } else {
                     Node.addNode(Exp());
                     if (currentToken.getSymbolType() == SymbolType.SEMICN) {
                         Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
@@ -616,6 +621,22 @@ public class Grammar {
                     nextToken();
                 } else {
                     throw new ERR("函数定义)");
+                }
+            }
+        } else if (Tokens.get(Point).getSymbolType() == SymbolType.LPARENT) {
+            Node.addNode(Ident());
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            if (currentToken.getSymbolType() == SymbolType.RPARENT) {
+                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                nextToken();
+            } else {
+                Node.addNode(FuncFParams());
+                if (currentToken.getSymbolType() == SymbolType.RPARENT) {
+                    Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                    nextToken();
+                } else {
+                    throw new ERR("UnaryExp的右括号没了");
                 }
             }
         } else {

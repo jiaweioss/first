@@ -110,7 +110,7 @@ public class TargetCodeGenerator {
         } else {
             result.append(printArrayDimen(newDimen, arrayValue, point));
             for (int i = 1; i < Dimension.get(1); i++) {
-                point+=calcuDimen(1,Dimension);
+                point += calcuDimen(1, Dimension);
                 result.append(",").append(printArrayDimen(newDimen, arrayValue, point));
             }
         }
@@ -140,8 +140,12 @@ public class TargetCodeGenerator {
         ) {
             if (fun.name.equals("getint") || fun.name.equals("getch")) {
                 TargetCode.add("declare " + fun.type + " @" + fun.name + "()");
-            } else {
+            } else if (fun.name.equals("putint") || fun.name.equals("putch")) {
                 TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32)");
+            }
+            //TODO:getarray()和putarray的补充
+            else {
+
             }
         }
     }
@@ -675,6 +679,9 @@ public class TargetCodeGenerator {
         } else if (func.getToken().getSymbolType() == SymbolType.PUTCH || func.getToken().getSymbolType() == SymbolType.PUTINT) {
             TargetCode.add("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2), blockID).print() + ")");
             reg = new regValue(regPoint.toString(), true, null);
+        } else if (Node.getNodeList().size()>1&&Node.getNodeList().get(1).getToken().getValue().equals("(")) {
+            TargetCode.add("%" + regPoint + " = call i32 @" + func.getToken().getValue() + "()");
+            reg = new regValue(regPoint.toString(), true, null);
         } else {
             reg = printPrimaryExp(List.get(List.size() - 1), blockID);
         }
@@ -697,6 +704,7 @@ public class TargetCodeGenerator {
         int p = 0;
         regValue reg;
         ArrayList<ASTNode> List = Node.getNodeList();
+
         if (List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
             return printExp(List.get(p + 1), blockID);
         } else if (List.get(0).getToken().getValue().equals("LVal")) {
@@ -712,7 +720,7 @@ public class TargetCodeGenerator {
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
                 }
-                if(List.get(0).getNodeList().size()>=point&&List.get(0).getNodeList().get(point-1).getToken().getValue().equals("[")){
+                if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
                     throw new ERR("hhhhh");
                 }
                 regPoint++;
