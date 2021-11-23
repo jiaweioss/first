@@ -214,13 +214,13 @@ public class TargetCodeGenerator {
                     "* %" + (regPoint++) + ", i32 0" + ", i32 0");
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
             for (int i = 1; i < arrayValue.size(); i++) {
-                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + (i));
+                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + 1);
                 TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
             }
         } else if (Dimension.size() == 1) {
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
             for (int i = 1; i < arrayValue.size(); i++) {
-                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + (i));
+                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + 1);
                 TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
             }
         } else {
