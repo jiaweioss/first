@@ -212,15 +212,18 @@ public class TargetCodeGenerator {
         if (Dimension.size() == 2) {
             TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
                     "* %" + (regPoint++) + ", i32 0" + ", i32 0");
+
+            int hold = regPoint;
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
             for (int i = 1; i < arrayValue.size(); i++) {
-                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + 1);
+                TargetCode.add("%" + (++regPoint) + " = getelementptr i32,i32* %" + hold + ", i32 " + (i));
                 TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
             }
         } else if (Dimension.size() == 1) {
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
+            int hold = regPoint;
             for (int i = 1; i < arrayValue.size(); i++) {
-                TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + 1);
+                TargetCode.add("%" + (++regPoint) + " = getelementptr i32,i32* %" + hold + ", i32 " + (i));
                 TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
             }
         } else {
