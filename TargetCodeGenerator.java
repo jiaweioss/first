@@ -73,6 +73,7 @@ public class TargetCodeGenerator {
                             ident);
                 }
             } else {
+                System.out.println(ident.arrayValue);
                 if (ident.type == IdentType.Variable) {
 
                     this.register.put(ident, ident.name);
@@ -108,9 +109,10 @@ public class TargetCodeGenerator {
                 result.append(",").append("i32 ").append(arrayValue.get(point++));
             }
         } else {
-            result.append(printArrayDimen(newDimen, arrayValue, point++));
+            result.append(printArrayDimen(newDimen, arrayValue, point));
             for (int i = 1; i < Dimension.get(1); i++) {
-                result.append(",").append(printArrayDimen(newDimen, arrayValue, point++));
+                point+=calcuDimen(1,Dimension);
+                result.append(",").append(printArrayDimen(newDimen, arrayValue, point));
             }
         }
         result.append("]");
