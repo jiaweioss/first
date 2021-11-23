@@ -394,6 +394,8 @@ public class Grammar {
                 break;
             case IDENT:
 
+                System.out.println(currentToken.getValue());
+
                 if (Tokens.get(Point).getSymbolType() == SymbolType.ASSIGN||Tokens.get(Point).getSymbolType() == SymbolType.LBRACK) {
                     Node.addNode(LVal());
                     if (currentToken.getSymbolType() == SymbolType.ASSIGN) {
