@@ -62,22 +62,43 @@ public class Lexical {
                     nextChar();
                 }
                 symbolType = Keyword.keywordMap.getOrDefault(temp.toString(), SymbolType.IDENT);
-                if(temp.toString().equals("getint")&&currentChar=='('){
-                    if(funcMap.getfuncMap().get("getint")==null)
-                    funcMap.getfuncMap().put("getint",new func("i32","getint"));
-                    symbolType = SymbolType.GETINT;
-                }else if(temp.toString().equals("getch")&&currentChar=='('){
-                    if(funcMap.getfuncMap().get("getch")==null)
-                        funcMap.getfuncMap().put("getch",new func("i32","getch"));
-                    symbolType = SymbolType.GETCH;
-                }else if(temp.toString().equals("putint")&&currentChar=='('){
-                    if(funcMap.getfuncMap().get("putint")==null)
-                        funcMap.getfuncMap().put("putint",new func("void","putint"));
-                    symbolType = SymbolType.PUTINT;
-                }else if(temp.toString().equals("putch")&&currentChar=='('){
-                    if(funcMap.getfuncMap().get("putch")==null)
-                        funcMap.getfuncMap().put("putch",new func("void","putch"));
-                    symbolType = SymbolType.PUTCH;
+                if (temp.toString().equals("getint")) {
+                    while (currentChar == ' ') {
+                        nextChar();
+                    }
+                    if (currentChar == '(') {
+                        if (funcMap.getfuncMap().get("getint") == null)
+                            funcMap.getfuncMap().put("getint", new func("i32", "getint"));
+                        symbolType = SymbolType.GETINT;
+                    }
+
+                } else if (temp.toString().equals("getch")) {
+                    while (currentChar == ' ') {
+                        nextChar();
+                    }
+                    if (currentChar == '(') {
+                        if (funcMap.getfuncMap().get("getch") == null)
+                            funcMap.getfuncMap().put("getch", new func("i32", "getch"));
+                        symbolType = SymbolType.GETCH;
+                    }
+                } else if (temp.toString().equals("putint")) {
+                    while (currentChar == ' ') {
+                        nextChar();
+                    }
+                    if (currentChar == '(') {
+                        if (funcMap.getfuncMap().get("putint") == null)
+                            funcMap.getfuncMap().put("putint", new func("void", "putint"));
+                        symbolType = SymbolType.PUTINT;
+                    }
+                } else if (temp.toString().equals("putch")) {
+                    while (currentChar == ' ') {
+                        nextChar();
+                    }
+                    if (currentChar == '(') {
+                        if (funcMap.getfuncMap().get("putch") == null)
+                            funcMap.getfuncMap().put("putch", new func("void", "putch"));
+                        symbolType = SymbolType.PUTCH;
+                    }
                 }
                 setToken(temp.toString(), symbolType);
             } else if (currentChar == '\n') {
@@ -90,7 +111,7 @@ public class Lexical {
                 if ((currentChar == '0' && preRead() == 'x') || currentChar == '0' && preRead() == 'X') {
                     nextChar();
                     nextChar();
-                    while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F')||(currentChar >= 'a' && currentChar <= 'f')) {
+                    while (Character.isDigit(currentChar) || (currentChar >= 'A' && currentChar <= 'F') || (currentChar >= 'a' && currentChar <= 'f')) {
                         temp.append(currentChar);
                         nextChar();
                     }
