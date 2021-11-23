@@ -713,6 +713,9 @@ public class TargetCodeGenerator {
                     point += 3;
                 }
 
+                if(List.get(0).getNodeList().get(point-1).getToken().getValue().equals("[")){
+                    throw new ERR("hhhhh");
+                }
                 regPoint++;
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
