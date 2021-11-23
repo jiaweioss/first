@@ -812,8 +812,6 @@ public class TargetCodeGenerator {
                         locate += calcuExp(List.get(0).getNodeList().get(3 * i - 1), blockID) * calcuDimen(i, ident.Dimension);
                     }
 
-                    System.out.println(locate);
-
                     return ident.arrayValue.get(locate);
                 } else {
                     return utils.searchKey(Ident.getToken().getValue(), blockID).value;
