@@ -355,9 +355,13 @@ public class TargetCodeGenerator {
 
     //输出函数定义的中间代码(int main())
     public void printFuncDef(ASTNode Node, Integer blockID) throws ERR {
+        this.regPoint = 0;
         ArrayList<ASTNode> List = Node.getNodeList();
-        TargetCode.add("define dso_local i32 @" + List.get(1).getNodeList().get(0).getToken().getValue() + "(){");
-        printTargetCode(List.get(4), blockID);
+        String name = List.get(1).getNodeList().get(0).getToken().getValue();
+        func fun = funcMap.getfuncMap().get(name);
+        TargetCode.add("define dso_local "+(fun.type.equals("void")?"void":"i32")+" @" + name + "(" + fun.printParams() + "){");
+        regPoint += fun.params.size();
+        printTargetCode(List.get(List.size() - 1), blockID);
         TargetCode.add("}");
     }
 
@@ -679,8 +683,16 @@ public class TargetCodeGenerator {
         } else if (func.getToken().getSymbolType() == SymbolType.PUTCH || func.getToken().getSymbolType() == SymbolType.PUTINT) {
             TargetCode.add("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2), blockID).print() + ")");
             reg = new regValue(regPoint.toString(), true, null);
-        } else if (Node.getNodeList().size()>1&&Node.getNodeList().get(1).getToken().getValue().equals("(")) {
-            TargetCode.add("%" + regPoint + " = call i32 @" + func.getToken().getValue() + "()");
+        } else if (Node.getNodeList().size() > 1 && Node.getNodeList().get(1).getToken().getValue().equals("(")) {
+
+            func f = funcMap.getfuncMap().get(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue());
+            if(f.type.equals("int")){
+                regPoint++;
+                TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "()");
+            }else {
+                TargetCode.add(" = call i32 @" + f.name + "()");
+            }
+
             reg = new regValue(regPoint.toString(), true, null);
         } else {
             reg = printPrimaryExp(List.get(List.size() - 1), blockID);

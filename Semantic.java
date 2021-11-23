@@ -18,6 +18,8 @@ public class Semantic {
         //检查类型
         if (checkValue(Node, "ConstDef")) {
             ConstDef(Node, blockID);
+        } else if (checkValue(Node, "funcDef")) {
+            FuncDef(Node, blockID);
         } else if (checkValue(Node, "VarDef")) {
             VarDef(Node, blockID);
         } else if (checkValue(Node, "Block")) {
@@ -69,6 +71,50 @@ public class Semantic {
         }
     }
 
+    private void FuncDef(ASTNode Node, int blockID) throws ERR {
+
+        String type = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
+        String name = Node.getNodeList().get(1).getNodeList().get(0).getToken().getValue();
+        ArrayList<Params> param = new ArrayList<>();
+        if (Node.getNodeList().get(3).getToken().getValue().equals("FuncFParams")) {
+            for (ASTNode node : Node.getNodeList().get(3).getNodeList()) {
+                if (node.getToken().getValue().equals("FuncFParam")) {
+                    for (Params p : param) {
+                        if (p.name.equals(FuncFParam(node, blockID).name)) {
+                            System.out.println(p.name);
+                            throw new ERR("定义重名啦");
+                        }
+                    }
+                    param.add(FuncFParam(node, blockID));
+
+                }
+            }
+        }
+        if (!funcMap.getfuncMap().containsKey(name)) {
+            funcMap.getfuncMap().put(name, new func(type, name, param));
+        } else {
+            throw new ERR("函数定义重复");
+        }
+
+    }
+
+    private Params FuncFParam(ASTNode Node, int blockID) throws ERR {
+        ArrayList<Integer> dimen = new ArrayList<>();
+        if (Node.getNodeList().size() > 3) {
+            dimen.add(0);
+        }
+
+        String name = Node.getNodeList().get(1).getNodeList().get(0).getToken().getValue();
+        for (ASTNode node : Node.getNodeList()) {
+            if (node.getToken().getValue().equals("ConstExp")) {
+                dimen.add(ConstExp(node, blockID));
+            }
+        }
+        return new Params(name, dimen);
+
+    }
+
+
     private void ConstDef(ASTNode Node, int blockID) throws ERR {
 
         if (!BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue())) {
@@ -88,13 +134,12 @@ public class Semantic {
                 }
 
                 if (!List.get(temp).getToken().getValue().equals("=")) {
-                    System.out.println();
                     throw new ERR("ConstDef");
                 } else {
                     temp += 1;
                 }
 
-                arrayName.arrayValue = ConstInitValArray(List.get(temp), arrayName.Dimension, blockID,"ConstInitVal");
+                arrayName.arrayValue = ConstInitValArray(List.get(temp), arrayName.Dimension, blockID, "ConstInitVal");
                 BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, arrayName);
             } else {
                 BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName,
@@ -109,7 +154,7 @@ public class Semantic {
         }
     }
 
-    public ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId,String type) throws ERR {
+    public ArrayList<Integer> ConstInitValArray(ASTNode Node, ArrayList<Integer> dimen, Integer blockId, String type) throws ERR {
         ArrayList<Integer> answer = new ArrayList<>();
         ArrayList<Integer> newDimen = new ArrayList<>();
         Integer childDimen = 1;
@@ -143,7 +188,7 @@ public class Semantic {
             }
 
             for (int i = temp; i < dimen.get(1); i++) {
-                for (int k = 0; k < childDimen;k++)
+                for (int k = 0; k < childDimen; k++)
                     answer.add(0);
             }
         }
@@ -157,19 +202,19 @@ public class Semantic {
             String IdentName = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
             ArrayList<ASTNode> List = Node.getNodeList();
 
-            if (List.size()>1&&List.get(1).getToken().getValue().equals("[")) {
+            if (List.size() > 1 && List.get(1).getToken().getValue().equals("[")) {
                 Identifier arrayName = new Identifier(0,
                         IdentName,
                         IdentType.Variable);
                 int temp = 1;
-                while (temp<List.size()&&List.get(temp).getToken().getValue().equals("[")) {
+                while (temp < List.size() && List.get(temp).getToken().getValue().equals("[")) {
                     arrayName.Dimension.add(ConstExp(List.get(temp + 1), blockID));
                     temp += 3;
                 }
                 if (blockID == 0) {
-                    if (temp<List.size()&&List.get(temp).getToken().getValue().equals("=")) {
+                    if (temp < List.size() && List.get(temp).getToken().getValue().equals("=")) {
                         temp += 1;
-                        arrayName.arrayValue = ConstInitValArray(List.get(temp),arrayName.Dimension,blockID,"InitVal");
+                        arrayName.arrayValue = ConstInitValArray(List.get(temp), arrayName.Dimension, blockID, "InitVal");
                     }
                 }
                 BlockMap.getBlockMap().get(blockID).Identifiers.put(IdentName, arrayName);

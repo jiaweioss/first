@@ -253,6 +253,7 @@ public class Grammar {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
             } else {
+                System.out.println(currentToken.getValue());
                 throw new ERR("funcDef的右括号没了");
             }
         }
@@ -276,6 +277,7 @@ public class Grammar {
     private ASTNode FuncFParam() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncFParam", 0), new ArrayList<>());
         Node.addNode(Btype());
+
         Node.addNode(Ident());
         if (currentToken.getSymbolType() == SymbolType.LBRACK) {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
@@ -317,7 +319,6 @@ public class Grammar {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
-            System.out.println(currentToken.getValue());
             throw new ERR("main没了");
         }
         return Node;
@@ -457,7 +458,7 @@ public class Grammar {
                     Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                     nextToken();
                 } else {
-                    System.out.println(currentToken.getValue());
+
                     throw new ERR("Stmt:;没了");
                 }
                 Node.addNode(Stmt());
@@ -476,7 +477,6 @@ public class Grammar {
                     Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                     nextToken();
                 } else {
-                    System.out.println(currentToken.getValue());
                     throw new ERR("Stmt:;没了");
                 }
                 Node.addNode(Stmt());
