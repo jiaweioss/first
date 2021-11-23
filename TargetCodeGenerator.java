@@ -209,7 +209,9 @@ public class TargetCodeGenerator {
     public void AllocaArray(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue, int point) {
 
 
-        if (Dimension.size() <= 1) {
+        if (Dimension.size() <= 2) {
+            TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
+                    "* %" + (regPoint++) + ", i32 0" + ", i32 0");
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
             for (int i = 1; i < arrayValue.size(); i++) {
                 TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + (i));
@@ -809,6 +811,9 @@ public class TargetCodeGenerator {
                     for (int i = 1; i < ident.Dimension.size(); i++) {
                         locate += calcuExp(List.get(0).getNodeList().get(3 * i - 1), blockID) * calcuDimen(i, ident.Dimension);
                     }
+
+                    System.out.println(locate);
+
                     return ident.arrayValue.get(locate);
                 } else {
                     return utils.searchKey(Ident.getToken().getValue(), blockID).value;
