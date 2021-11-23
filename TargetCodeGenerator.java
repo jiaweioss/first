@@ -73,7 +73,6 @@ public class TargetCodeGenerator {
                             ident);
                 }
             } else {
-                System.out.println(ident.arrayValue);
                 if (ident.type == IdentType.Variable) {
 
                     this.register.put(ident, ident.name);
