@@ -274,7 +274,7 @@ public class TargetCodeGenerator {
 
                 this.regPoint++;
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
-                        " %" + register.get(ident) + ", i32 0" + ", i32 0");
+                        "* %" + register.get(ident) + ", i32 0" + ", i32 0");
                 AllocaArray(ArrayCutHead(ident.Dimension), ident.arrayValue, 0);
 
             } else {
