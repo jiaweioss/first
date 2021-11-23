@@ -209,7 +209,7 @@ public class TargetCodeGenerator {
     public void AllocaArray(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue, int point) {
 
 
-        if (Dimension.size() <= 2) {
+        if (Dimension.size() <= 1) {
             TargetCode.add("store i32 " + arrayValue.get(0) + ", i32* %" + regPoint);
             for (int i = 1; i < arrayValue.size(); i++) {
                 TargetCode.add("%" + (regPoint + 1) + " = getelementptr i32,i32* %" + (regPoint++) + ", i32 " + (i));
