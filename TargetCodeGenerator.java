@@ -364,7 +364,7 @@ public class TargetCodeGenerator {
                 regPoint++;
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
-                        + ", i32* %" + register.get(key));
+                        + ", i32* %" + regPoint);
 
 
             } else {
