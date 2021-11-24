@@ -334,6 +334,7 @@ public class Grammar {
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
         } else {
+            System.out.println(currentToken.getValue());
             throw new ERR("main没了");
         }
         return Node;
@@ -638,7 +639,7 @@ public class Grammar {
                     throw new ERR("函数定义)");
                 }
             }
-        } else if (Tokens.get(Point).getSymbolType() == SymbolType.LPARENT) {
+        } else if (currentToken.getSymbolType() == SymbolType.IDENT&&Tokens.get(Point).getSymbolType() == SymbolType.LPARENT) {
             Node.addNode(Ident());
             Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
             nextToken();
