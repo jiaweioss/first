@@ -21,6 +21,8 @@ public enum SymbolType {
     WHILETK,            // while
     GETINT,           // getint
     GETCH,              // getch
+    GETARRAY,
+    PUTARRAY,
     PUTCH,              // putch
     PUTINT,             // printf
     RETURNTK,           // return

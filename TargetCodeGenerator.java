@@ -4,6 +4,7 @@ import java.util.HashMap;
 public class TargetCodeGenerator {
 
     int BID;
+    ArrayList<Params> holdParams;
     whileBlock whileBlock;
     //虚拟寄存器与变量的对应表
     HashMap<Identifier, String> register;
@@ -18,6 +19,7 @@ public class TargetCodeGenerator {
         register = new HashMap<>();
         this.BID = 0;
         this.whileBlock = new whileBlock(null, 0);
+        this.holdParams = null;
     }
 
     boolean checkHas(ASTNode Node, int blockID) {
@@ -142,10 +144,10 @@ public class TargetCodeGenerator {
                 TargetCode.add("declare " + fun.type + " @" + fun.name + "()");
             } else if (fun.name.equals("putint") || fun.name.equals("putch")) {
                 TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32)");
-            }
-            //TODO:getarray()和putarray的补充
-            else {
-
+            } else if (fun.name.equals("getarray")) {
+                TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32*)");
+            } else if (fun.name.equals("putarray")) {
+                TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32, i32*)");
             }
         }
     }
@@ -166,6 +168,19 @@ public class TargetCodeGenerator {
             if (utils.checkTokenValue(Node, "Block")) {
                 IRBlockMap.getBlockMap().put(++BID, new Block(BID, IRBlockMap.getBlockMap().get(blockID), 0));
                 blockID = BID;
+
+                if (this.holdParams != null && this.holdParams.size() > 0) {
+                    int i = 0;
+                    for (Params p : holdParams) {
+                        if (BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(p.name)) {
+                            IRBlockMap.getBlockMap().get(blockID).Identifiers.put(p.name, BlockMap.getBlockMap().get(blockID).Identifiers.get(p.name));
+                            register.put(BlockMap.getBlockMap().get(blockID).Identifiers.get(p.name), Integer.toString(i));
+                            i++;
+                        }
+                    }
+                }
+
+
             }
             for (ASTNode node : Node.getNodeList()
             ) {
@@ -359,10 +374,12 @@ public class TargetCodeGenerator {
         ArrayList<ASTNode> List = Node.getNodeList();
         String name = List.get(1).getNodeList().get(0).getToken().getValue();
         func fun = funcMap.getfuncMap().get(name);
-        TargetCode.add("define dso_local "+(fun.type.equals("void")?"void":"i32")+" @" + name + "(" + fun.printParams() + "){");
+        TargetCode.add("define dso_local " + (fun.type.equals("void") ? "void" : "i32") + " @" + name + "(" + fun.printParams() + "){");
+        this.holdParams = fun.params;
         regPoint += fun.params.size();
         printTargetCode(List.get(List.size() - 1), blockID);
         TargetCode.add("}");
+        TargetCode.add("");
     }
 
     public void printStmt(ASTNode Node, Integer blockID) throws ERR {
@@ -686,12 +703,24 @@ public class TargetCodeGenerator {
         } else if (Node.getNodeList().size() > 1 && Node.getNodeList().get(1).getToken().getValue().equals("(")) {
 
             func f = funcMap.getfuncMap().get(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue());
-            if(f.type.equals("int")){
-                regPoint++;
-                TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "()");
-            }else {
-                TargetCode.add(" = call i32 @" + f.name + "()");
+            if (Node.getNodeList().size() == 4) {
+                if (f.type.equals("int")) {
+
+                    String s = printFuncRExp(List.get(List.size() - 2), blockID, f);
+                    regPoint++;
+                    TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "(" + s + ")");
+                } else {
+                    TargetCode.add(" = call i32 @" + f.name + "(" + printFuncRExp(List.get(List.size() - 2), blockID, f) + ")");
+                }
+            } else {
+                if (f.type.equals("int")) {
+                    regPoint++;
+                    TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "()");
+                } else {
+                    TargetCode.add(" = call i32 @" + f.name + "()");
+                }
             }
+
 
             reg = new regValue(regPoint.toString(), true, null);
         } else {
@@ -729,6 +758,9 @@ public class TargetCodeGenerator {
                 int point = 2;
                 locate.append(", i32 0");
                 for (int i = 1; i < key.Dimension.size(); i++) {
+
+                    System.out.println(key.name);
+
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
                 }
@@ -758,6 +790,17 @@ public class TargetCodeGenerator {
         return reg;
     }
 
+    public String printFuncRExp(ASTNode Node, Integer blockID, func fun) throws ERR {
+
+        StringBuilder s = new StringBuilder();
+        int i = 0;
+        for (Params p : fun.params) {
+            s.append(p.printSize(Integer.parseInt(printExp(Node.getNodeList().get(i), blockID).value))).append(",");
+            i += 2;
+        }
+
+        return s.substring(0, s.length() - 1);
+    }
 
     public int ConstInitVal(ASTNode Node, int blockID) throws ERR {
         return ConstExp(Node.getNodeList().get(0), blockID);

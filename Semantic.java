@@ -4,10 +4,11 @@ import java.util.List;
 public class Semantic {
 
     int BID;
-
+    ArrayList<Params> holdParam;
     public Semantic() {
         BlockMap.getBlockMap().put(0, new Block(0, null, 0));
         this.BID = 0;
+        this.holdParam = null;
     }
 
     private boolean checkValue(ASTNode Node, String value) {
@@ -25,6 +26,15 @@ public class Semantic {
         } else if (checkValue(Node, "Block")) {
             BlockMap.getBlockMap().put(++BID, new Block(BID, BlockMap.getBlockMap().get(blockID), 0));
             blockID = BID;
+            if(this.holdParam!=null){
+                for(Params p:holdParam){
+                    BlockMap.getBlockMap().get(blockID).Identifiers.put(p.name,
+                            new Identifier(null,
+                                    p.name,
+                                    IdentType.Variable));
+                }
+                this.holdParam = null;
+            }
         } else if (checkValue(Node, "Stmt")) {
             Stmt(Node, blockID);
         } else if (checkValue(Node, "Exp")) {
@@ -72,15 +82,15 @@ public class Semantic {
     }
 
     private void FuncDef(ASTNode Node, int blockID) throws ERR {
-
         String type = Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue();
         String name = Node.getNodeList().get(1).getNodeList().get(0).getToken().getValue();
         ArrayList<Params> param = new ArrayList<>();
         if (Node.getNodeList().get(3).getToken().getValue().equals("FuncFParams")) {
             for (ASTNode node : Node.getNodeList().get(3).getNodeList()) {
                 if (node.getToken().getValue().equals("FuncFParam")) {
+                    String pname = FuncFParam(node, blockID).name;
                     for (Params p : param) {
-                        if (p.name.equals(FuncFParam(node, blockID).name)) {
+                        if (p.name.equals(pname)) {
                             System.out.println(p.name);
                             throw new ERR("定义重名啦");
                         }
@@ -89,6 +99,7 @@ public class Semantic {
 
                 }
             }
+            this.holdParam = param;
         }
         if (!funcMap.getfuncMap().containsKey(name)) {
             funcMap.getfuncMap().put(name, new func(type, name, param));
@@ -100,10 +111,10 @@ public class Semantic {
 
     private Params FuncFParam(ASTNode Node, int blockID) throws ERR {
         ArrayList<Integer> dimen = new ArrayList<>();
+        dimen.add(0);
         if (Node.getNodeList().size() > 3) {
             dimen.add(0);
         }
-
         String name = Node.getNodeList().get(1).getNodeList().get(0).getToken().getValue();
         for (ASTNode node : Node.getNodeList()) {
             if (node.getToken().getValue().equals("ConstExp")) {

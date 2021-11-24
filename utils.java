@@ -9,7 +9,6 @@ public class utils {
 
     public static Identifier searchKey(String name, Integer blockID) {
         Block temp = IRBlockMap.getBlockMap().get(blockID);
-
         while (!temp.Identifiers.containsKey(name)) {
             temp = temp.Father;
         }

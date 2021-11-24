@@ -16,7 +16,7 @@ public class func {
 
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < params.size(); i++) {
-            s.append(params.get(i).printSize(i+1));
+            s.append(params.get(i).printSize(i));
             if (i != params.size() - 1) {
                 s.append(",");
             }

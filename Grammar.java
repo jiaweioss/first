@@ -274,8 +274,27 @@ public class Grammar {
         return Node;
     }
 
+
+    private ASTNode FuncRParams() throws ERR {
+        ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncRParams", 0), new ArrayList<>());
+        Node.addNode(Exp());
+
+        while (currentToken.getSymbolType() == SymbolType.COMMA) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+            Node.addNode(Exp());
+        }
+
+        return Node;
+    }
+
+
     private ASTNode FuncFParam() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncFParam", 0), new ArrayList<>());
+
+
+        System.out.println(currentToken.getValue());
+
         Node.addNode(Btype());
 
         Node.addNode(Ident());
@@ -631,7 +650,7 @@ public class Grammar {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
             } else {
-                Node.addNode(FuncFParams());
+                Node.addNode(FuncRParams());
                 if (currentToken.getSymbolType() == SymbolType.RPARENT) {
                     Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                     nextToken();
