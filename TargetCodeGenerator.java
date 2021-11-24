@@ -825,7 +825,7 @@ public class TargetCodeGenerator {
                     newDimen = ArrayCutHead(newDimen);
                 }
 
-                TargetCode.add("%" + (regPoint + 1) + " = load i32, " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
+                TargetCode.add("%" + (regPoint + 1) + " = load " + printArrayType(ArrayCutHead(newDimen)) + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
                 reg = new regValue(regPoint.toString(), true, null);
 
             } else if (key.Dimension.size() > 1 && key.Dimension.get(1) == 0) {
@@ -848,7 +848,7 @@ public class TargetCodeGenerator {
                     newDimen = ArrayCutHead(newDimen);
                 }
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ArrayCutHead(key.Dimension)) + ", " + printArrayType(ArrayCutHead(key.Dimension)) + "* %" + hold_load + locate.toString());
-                TargetCode.add("%" + (regPoint + 1) + " = load i32, " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
+                TargetCode.add("%" + (regPoint + 1) + " = load " + printArrayType(ArrayCutHead(newDimen)) + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
                 reg = new regValue(regPoint.toString(), true, null);
             } else {
                 if (key.type == IdentType.Variable) {
