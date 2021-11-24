@@ -13,12 +13,12 @@ public class Params {
     public String printSize(int regPoint) {
         StringBuilder s = new StringBuilder();
 
-        if (dimension.size() == 0) {
+        if (dimension.size() == 1) {
             s.append("i32 %").append(regPoint);
-        } else if (dimension.size() == 1) {
+        } else if (dimension.size() == 2) {
             s.append("i32* %").append(regPoint);
         } else {
-            for (int i = 1; i < dimension.size(); i++) {
+            for (int i = 2; i < dimension.size(); i++) {
                 s.append("[").append(dimension.get(i)).append(" x ");
             }
             s.append("i32");

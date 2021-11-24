@@ -291,10 +291,6 @@ public class Grammar {
 
     private ASTNode FuncFParam() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "FuncFParam", 0), new ArrayList<>());
-
-
-        System.out.println(currentToken.getValue());
-
         Node.addNode(Btype());
 
         Node.addNode(Ident());

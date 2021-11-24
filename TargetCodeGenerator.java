@@ -758,9 +758,6 @@ public class TargetCodeGenerator {
                 int point = 2;
                 locate.append(", i32 0");
                 for (int i = 1; i < key.Dimension.size(); i++) {
-
-                    System.out.println(key.name);
-
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
                 }
