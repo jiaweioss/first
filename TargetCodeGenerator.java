@@ -186,8 +186,6 @@ public class TargetCodeGenerator {
                         }
                     }
                 }
-
-
             }
             for (ASTNode node : Node.getNodeList()
             ) {
@@ -266,13 +264,23 @@ public class TargetCodeGenerator {
     //给变量分配空间
     public void printIdentifier(Integer Id) {
 
+        int paramNum = regPoint;
         Block block = BlockMap.getBlockMap().get(Id);
         for (Identifier ident : block.Identifiers.values()
         ) {
             if (ident.type == IdentType.Variable) {
                 this.regPoint++;
-                this.register.put(ident, regPoint.toString());
-                TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
+
+                if (this.register.containsKey(ident)) {
+                    TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
+                    TargetCode.add("store " + printArrayType(ident.Dimension) + "%" + this.register.get(ident) + ", " +
+                            printArrayType(ident.Dimension) + "* %" + regPoint);
+                    this.register.put(ident, regPoint.toString());
+                } else {
+                    this.register.put(ident, regPoint.toString());
+                    TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
+                }
+
 
             } else if (ident.type == IdentType.Constant && ident.Dimension.size() > 1) {
                 this.regPoint++;
@@ -281,15 +289,27 @@ public class TargetCodeGenerator {
                 TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
             }
         }
+
     }
 
     public StringBuilder printArrayType(ArrayList<Integer> dimension) {
         StringBuilder result = new StringBuilder();
         for (int i = 1; i < dimension.size(); i++) {
-            result.append("[").append(dimension.get(i)).append(" x ");
+            if (dimension.get(i) != 0) {
+                result.append("[").append(dimension.get(i)).append(" x ");
+            }
         }
         result.append("i32");
-        result.append("]".repeat(Math.max(0, dimension.size() - 1)));
+        for (int i = 1; i < dimension.size(); i++) {
+            if (dimension.get(i) != 0) {
+                result.append("]");
+            }
+        }
+
+        if (dimension.size() > 1 && dimension.get(1) == 0) {
+            result.append("*");
+        }
+        result.append(" ");
         return result;
     }
 
@@ -764,10 +784,13 @@ public class TargetCodeGenerator {
 
                 int point = 2;
                 locate.append(", i32 0");
-                for (int i = 1; i < key.Dimension.size(); i++) {
+                for (int i = 1; i < key.Dimension.size() && point < List.get(0).getNodeList().size(); i++) {
 //                    System.out.println(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
+                    if (point >= List.get(0).getNodeList().size()) {
+                        break;
+                    }
                 }
                 if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
                     throw new ERR("hhhhh");
@@ -804,7 +827,7 @@ public class TargetCodeGenerator {
             i += 2;
         }
 
-        return s.substring(0, s.length() - 1);
+        return s.substring(0, s.length() - 2);
     }
 
     public int ConstInitVal(ASTNode Node, int blockID) throws ERR {
