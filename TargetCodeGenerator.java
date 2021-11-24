@@ -769,9 +769,9 @@ public class TargetCodeGenerator {
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
                 }
-//                if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
-//                    throw new ERR("hhhhh");
-//                }
+                if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
+                    throw new ERR("hhhhh");
+                }
                 regPoint++;
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
