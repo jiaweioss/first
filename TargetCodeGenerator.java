@@ -757,14 +757,14 @@ public class TargetCodeGenerator {
                     regPoint++;
                     TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "(" + s + ")");
                 } else {
-                    TargetCode.add("call i32 @" + f.name + "(" + printFuncRExp(List.get(List.size() - 2), blockID, f) + ")");
+                    TargetCode.add("call void @" + f.name + "(" + printFuncRExp(List.get(List.size() - 2), blockID, f) + ")");
                 }
             } else {
                 if (f.type.equals("int")) {
                     regPoint++;
                     TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "()");
                 } else {
-                    TargetCode.add("call i32 @" + f.name + "()");
+                    TargetCode.add("call void @" + f.name + "()");
                 }
             }
 
