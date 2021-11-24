@@ -825,7 +825,7 @@ public class TargetCodeGenerator {
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
 
                 if (flag == 0) {
-                    TargetCode.add("%" + (regPoint + 1) + " = load i32, " + "%" + (regPoint++));
+                    TargetCode.add("%" + (regPoint + 1) + " = load i32, i32* " + "%" + (regPoint++));
                 }
 
 
