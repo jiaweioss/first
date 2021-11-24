@@ -804,13 +804,18 @@ public class TargetCodeGenerator {
                 StringBuilder locate = new StringBuilder();
 
                 int point = 2;
+                int flag = 0;
                 locate.append(", i32 0");
-                int cut = 0;
-                for (int i = 1; i < key.Dimension.size() && point < List.get(0).getNodeList().size(); i++) {
+                for (int i = 1; i < key.Dimension.size(); i++) {
 //                    System.out.println(printExp(List.get(0).getNodeList().get(point), blockID).print());
+                    if (point >= List.get(0).getNodeList().size()) {
+                        locate.append(", i32 0");
+                        flag = 1;
+                        break;
+                    }
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
-                    cut++;
+
                 }
                 if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
                     throw new ERR("hhhhh");
@@ -819,12 +824,11 @@ public class TargetCodeGenerator {
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
 
-                ArrayList<Integer> newDimen = key.Dimension;
-
-                for (int i = 0; i < cut; i++) {
-                    newDimen = ArrayCutHead(newDimen);
+                if (flag == 0) {
+                    TargetCode.add("%" + (regPoint + 1) + " = load i32, " + "%" + (regPoint++));
                 }
-                TargetCode.add("%" + (regPoint + 1) + " = load " + "i32*" + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
+
+
                 reg = new regValue(regPoint.toString(), true, null);
 
             } else if (key.Dimension.size() > 1 && key.Dimension.get(1) == 0) {
@@ -835,19 +839,21 @@ public class TargetCodeGenerator {
                 TargetCode.add("%" + regPoint + " = load " + printArrayType(key.Dimension) + "," + printArrayType(key.Dimension) + "* " + reg.print());
 
                 int point = 2;
-                int cut = 0;
-                for (int i = 1; i < key.Dimension.size() && point < Node.getNodeList().get(0).getNodeList().size(); i++) {
+                int flag = 0;
+                for (int i = 1; i < key.Dimension.size(); i++) {
+                    if (point >= List.get(0).getNodeList().size()) {
+                        locate.append(", i32 0");
+                        flag = 1;
+                        break;
+                    }
                     locate.append(", i32 ").append(printExp(Node.getNodeList().get(0).getNodeList().get(point), blockID).print());
                     point += 3;
-                    cut++;
                 }
                 regPoint++;
-                ArrayList<Integer> newDimen = key.Dimension;
-                for (int i = 0; i < cut; i++) {
-                    newDimen = ArrayCutHead(newDimen);
-                }
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ArrayCutHead(key.Dimension)) + ", " + printArrayType(ArrayCutHead(key.Dimension)) + "* %" + hold_load + locate.toString());
-                TargetCode.add("%" + (regPoint + 1) + " = load " + printArrayType(newDimen) + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
+                if (flag == 0) {
+                    TargetCode.add("%" + (regPoint + 1) + " = load i32, i32* " + "%" + (regPoint++));
+                }
                 reg = new regValue(regPoint.toString(), true, null);
             } else {
                 if (key.type == IdentType.Variable) {
