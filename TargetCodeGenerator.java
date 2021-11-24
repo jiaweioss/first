@@ -817,7 +817,7 @@ public class TargetCodeGenerator {
                 }
                 regPoint++;
 
-                TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
+                TargetCode.add("%" + regPoint + " = getelementptr " + "i32*" + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
 
                 ArrayList<Integer> newDimen = key.Dimension;
 
