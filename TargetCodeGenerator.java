@@ -405,8 +405,8 @@ public class TargetCodeGenerator {
         this.holdParams = fun.params;
         regPoint += fun.params.size();
         printTargetCode(List.get(List.size() - 1), blockID);
-        if(TargetCode.get(TargetCode.size()-1).endsWith(":")){
-            TargetCode.add(TargetCode.get(TargetCode.size()-3));
+        if (TargetCode.get(TargetCode.size() - 1).endsWith(":")) {
+            TargetCode.add(TargetCode.get(TargetCode.size() - 3));
         }
         TargetCode.add("}");
         TargetCode.add("");
@@ -414,8 +414,14 @@ public class TargetCodeGenerator {
 
     public void printStmt(ASTNode Node, Integer blockID) throws ERR {
         if (Node.getNodeList().get(0).getToken().getSymbolType() == SymbolType.RETURNTK) {
-            TargetCode.add("ret i32 " + printExp(Node.getNodeList().get(1), blockID).print());
-            regPoint++;
+            if(Node.getNodeList().size()==3){
+                TargetCode.add("ret i32 " + printExp(Node.getNodeList().get(1), blockID).print());
+                regPoint++;
+            }else {
+                TargetCode.add("ret void ");
+                regPoint++;
+            }
+            
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("LVal")) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
             if (key.Dimension.size() > 1 && key.Dimension.get(1) != 0) {
