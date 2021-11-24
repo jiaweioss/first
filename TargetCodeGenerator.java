@@ -876,7 +876,7 @@ public class TargetCodeGenerator {
         StringBuilder s = new StringBuilder();
         int i = 0;
         for (Params p : fun.params) {
-            s.append(p.printSize(Integer.parseInt(printExp(Node.getNodeList().get(i), blockID).value))).append(" ,");
+            s.append(p.printSize(printExp(Node.getNodeList().get(i), blockID))).append(" ,");
             i += 2;
         }
 

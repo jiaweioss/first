@@ -16,7 +16,7 @@ public class func {
 
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < params.size(); i++) {
-            s.append(params.get(i).printSize(i));
+            s.append(params.get(i).printSize(new regValue(Integer.toString(i),false,name)));
             if (i != params.size() - 1) {
                 s.append(", ");
             }
