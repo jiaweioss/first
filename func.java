@@ -18,7 +18,7 @@ public class func {
         for (int i = 0; i < params.size(); i++) {
             s.append(params.get(i).printSize(i));
             if (i != params.size() - 1) {
-                s.append(",");
+                s.append(", ");
             }
         }
         return s.toString();

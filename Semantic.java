@@ -5,6 +5,7 @@ public class Semantic {
 
     int BID;
     ArrayList<Params> holdParam;
+
     public Semantic() {
         BlockMap.getBlockMap().put(0, new Block(0, null, 0));
         this.BID = 0;
@@ -26,12 +27,11 @@ public class Semantic {
         } else if (checkValue(Node, "Block")) {
             BlockMap.getBlockMap().put(++BID, new Block(BID, BlockMap.getBlockMap().get(blockID), 0));
             blockID = BID;
-            if(this.holdParam!=null){
-                for(Params p:holdParam){
-                    BlockMap.getBlockMap().get(blockID).Identifiers.put(p.name,
-                            new Identifier(null,
-                                    p.name,
-                                    IdentType.Variable));
+            if (this.holdParam != null) {
+                for (Params p : holdParam) {
+                    Identifier i = new Identifier(null, p.name, IdentType.Variable);
+                    i.Dimension = p.dimension;
+                    BlockMap.getBlockMap().get(blockID).Identifiers.put(p.name, i);
                 }
                 this.holdParam = null;
             }
@@ -112,7 +112,7 @@ public class Semantic {
     private Params FuncFParam(ASTNode Node, int blockID) throws ERR {
         ArrayList<Integer> dimen = new ArrayList<>();
         dimen.add(0);
-        if (Node.getNodeList().size() > 3) {
+        if (Node.getNodeList().size() >= 3) {
             dimen.add(0);
         }
         String name = Node.getNodeList().get(1).getNodeList().get(0).getToken().getValue();

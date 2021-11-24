@@ -68,7 +68,7 @@ public class Lexical {
                     }
                     if (currentChar == '(') {
                         if (funcMap.getfuncMap().get("getint") == null)
-                            funcMap.getfuncMap().put("getint", new func("i32", "getint", new ArrayList<>()));
+                            funcMap.getfuncMap().put("getint", new func("int", "getint", new ArrayList<>()));
                         symbolType = SymbolType.GETINT;
                     }
 
@@ -78,7 +78,7 @@ public class Lexical {
                     }
                     if (currentChar == '(') {
                         if (funcMap.getfuncMap().get("getch") == null)
-                            funcMap.getfuncMap().put("getch", new func("i32", "getch", new ArrayList<>()));
+                            funcMap.getfuncMap().put("getch", new func("int", "getch", new ArrayList<>()));
                         symbolType = SymbolType.GETCH;
                     }
                 } else if (temp.toString().equals("putint")) {
@@ -121,8 +121,11 @@ public class Lexical {
                             dimen.add(0);
                             ArrayList<Params> param = new ArrayList<>();
                             param.add(new Params(null, dimen));
-                            dimen.add(0);
-                            param.add(new Params(null, dimen));
+                            ArrayList<Integer> tem = new ArrayList<>();
+                            tem.add(0);
+                            tem.add(0);
+                            param.add(new Params(null, tem));
+
                             funcMap.getfuncMap().put("putarray", new func("void", "putarray", param));
                         }
 
@@ -139,7 +142,7 @@ public class Lexical {
                             dimen.add(0);
                             ArrayList<Params> param = new ArrayList<>();
                             param.add(new Params(null, dimen));
-                            funcMap.getfuncMap().put("getarray", new func("i32", "getarray", param));
+                            funcMap.getfuncMap().put("getarray", new func("int", "getarray", param));
                         }
 
                         symbolType = SymbolType.IDENT;

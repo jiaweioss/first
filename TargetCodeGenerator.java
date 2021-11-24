@@ -140,14 +140,21 @@ public class TargetCodeGenerator {
     public void defFunc() {
         for (func fun : funcMap.getfuncMap().values()
         ) {
-            if (fun.name.equals("getint") || fun.name.equals("getch")) {
-                TargetCode.add("declare " + fun.type + " @" + fun.name + "()");
-            } else if (fun.name.equals("putint") || fun.name.equals("putch")) {
-                TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32)");
-            } else if (fun.name.equals("getarray")) {
-                TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32*)");
-            } else if (fun.name.equals("putarray")) {
-                TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32, i32*)");
+            switch (fun.name) {
+                case "getint":
+                case "getch":
+                    TargetCode.add("declare " + "i32" + " @" + fun.name + "()");
+                    break;
+                case "putint":
+                case "putch":
+                    TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32)");
+                    break;
+                case "getarray":
+                    TargetCode.add("declare " + "i32" + " @" + fun.name + "(i32*)");
+                    break;
+                case "putarray":
+                    TargetCode.add("declare " + fun.type + " @" + fun.name + "(i32, i32*)");
+                    break;
             }
         }
     }
@@ -710,14 +717,14 @@ public class TargetCodeGenerator {
                     regPoint++;
                     TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "(" + s + ")");
                 } else {
-                    TargetCode.add(" = call i32 @" + f.name + "(" + printFuncRExp(List.get(List.size() - 2), blockID, f) + ")");
+                    TargetCode.add("call i32 @" + f.name + "(" + printFuncRExp(List.get(List.size() - 2), blockID, f) + ")");
                 }
             } else {
                 if (f.type.equals("int")) {
                     regPoint++;
                     TargetCode.add("%" + regPoint + " = call i32 @" + f.name + "()");
                 } else {
-                    TargetCode.add(" = call i32 @" + f.name + "()");
+                    TargetCode.add("call i32 @" + f.name + "()");
                 }
             }
 
@@ -757,13 +764,14 @@ public class TargetCodeGenerator {
 
                 int point = 2;
                 locate.append(", i32 0");
-                for (int i = 1; i < key.Dimension.size(); i++) {
+                for (int i = 1; i < (List.get(0).getNodeList().size() - 2)/3; i++) {
+//                    System.out.println(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     locate.append(", i32 ").append(printExp(List.get(0).getNodeList().get(point), blockID).print());
                     point += 3;
                 }
-                if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
-                    throw new ERR("hhhhh");
-                }
+//                if (List.get(0).getNodeList().size() >= point && List.get(0).getNodeList().get(point - 1).getToken().getValue().equals("[")) {
+//                    throw new ERR("hhhhh");
+//                }
                 regPoint++;
 
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
@@ -792,7 +800,7 @@ public class TargetCodeGenerator {
         StringBuilder s = new StringBuilder();
         int i = 0;
         for (Params p : fun.params) {
-            s.append(p.printSize(Integer.parseInt(printExp(Node.getNodeList().get(i), blockID).value))).append(",");
+            s.append(p.printSize(Integer.parseInt(printExp(Node.getNodeList().get(i), blockID).value))).append(" ,");
             i += 2;
         }
 
