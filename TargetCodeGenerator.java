@@ -475,9 +475,13 @@ public class TargetCodeGenerator {
                 TargetCode.add(regPoint + ":");
                 printStmt(Node.getNodeList().get(4), blockID);
                 TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
-                TargetCode.add("br label %" + (regPoint));
-                TargetCode.add("");
-                TargetCode.add(regPoint + ":");
+
+                if (!TargetCode.get(TargetCode.size() - 1).startsWith("ret")) {
+                    TargetCode.add("br label %" + (regPoint));
+                    TargetCode.add("");
+                    TargetCode.add(regPoint + ":");
+                }
+
 
             } else {
                 int mark1, mark2;
@@ -494,10 +498,12 @@ public class TargetCodeGenerator {
                 TargetCode.add(regPoint + ":");
 
                 printStmt(Node.getNodeList().get(6), blockID);
-                TargetCode.add("br label %" + (++regPoint));
                 TargetCode.set(mark2 - 1, TargetCode.get(mark2 - 1) + regPoint);
-                TargetCode.add("");
-                TargetCode.add(regPoint + ":");
+                if (!TargetCode.get(TargetCode.size() - 1).startsWith("ret")) {
+                    TargetCode.add("br label %" + (regPoint));
+                    TargetCode.add("");
+                    TargetCode.add(regPoint + ":");
+                }
             }
 
 
@@ -524,9 +530,11 @@ public class TargetCodeGenerator {
                 TargetCode.set(i - 1, TargetCode.get(i - 1) + (regPoint));
             }
 
-            TargetCode.add("br label %" + (hold));
-            TargetCode.add("");
-            TargetCode.add(regPoint + ":");
+            if (!TargetCode.get(TargetCode.size() - 1).startsWith("ret")) {
+                TargetCode.add("br label %" + (regPoint));
+                TargetCode.add("");
+                TargetCode.add(regPoint + ":");
+            }
 
             this.whileBlock = whileBlock.Father;
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("Block")) {
