@@ -406,7 +406,7 @@ public class TargetCodeGenerator {
         regPoint += fun.params.size();
         printTargetCode(List.get(List.size() - 1), blockID);
         if (TargetCode.get(TargetCode.size() - 1).endsWith(":")) {
-            TargetCode.add(TargetCode.get(TargetCode.size() - 3));
+            TargetCode.add("ret void");
         }
         TargetCode.add("}");
         TargetCode.add("");
@@ -421,7 +421,7 @@ public class TargetCodeGenerator {
                 TargetCode.add("ret void ");
                 regPoint++;
             }
-            
+
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("LVal")) {
             Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
             if (key.Dimension.size() > 1 && key.Dimension.get(1) != 0) {
