@@ -817,14 +817,14 @@ public class TargetCodeGenerator {
                 }
                 regPoint++;
 
-                TargetCode.add("%" + regPoint + " = getelementptr " + "i32*" + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
+                TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(key.Dimension) + ", " + printArrayType(key.Dimension) + "* " + reg.print() + locate.toString());
 
                 ArrayList<Integer> newDimen = key.Dimension;
 
                 for (int i = 0; i < cut; i++) {
                     newDimen = ArrayCutHead(newDimen);
                 }
-                TargetCode.add("%" + (regPoint + 1) + " = load " + printArrayType(newDimen) + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
+                TargetCode.add("%" + (regPoint + 1) + " = load " + "i32*" + ", " + printArrayType(newDimen) + "* " + "%" + (regPoint++));
                 reg = new regValue(regPoint.toString(), true, null);
 
             } else if (key.Dimension.size() > 1 && key.Dimension.get(1) == 0) {
