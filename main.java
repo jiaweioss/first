@@ -50,8 +50,6 @@ public class main {
 //         p.print(ASTRoot, 0);
 
 
-        System.out.println(funcMap.getfuncMap().keySet());
-
 
         new Semantic().analyze(ASTRoot, 0);
 
