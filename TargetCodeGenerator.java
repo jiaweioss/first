@@ -759,11 +759,9 @@ public class TargetCodeGenerator {
         for (ASTNode node : Node.getNodeList()) {
             if (!node.getToken().getValue().equals("+") && !node.getToken().getValue().equals("-") && !node.getToken().getValue().equals("!")) {
                 list.add(node);
-                System.out.println(node.getToken().getValue());
             }
 
         }
-        System.out.println();
 
 
         if (func.getToken().getSymbolType() == SymbolType.GETINT || func.getToken().getSymbolType() == SymbolType.GETCH) {
