@@ -405,8 +405,8 @@ public class TargetCodeGenerator {
         this.holdParams = fun.params;
         regPoint += fun.params.size();
         printTargetCode(List.get(List.size() - 1), blockID);
-        if (TargetCode.get(TargetCode.size() - 1).endsWith(":")||fun.type.equals("void")) {
-            TargetCode.add("ret "+(fun.type.equals("void") ? "void" : "i32 0"));
+        if (TargetCode.get(TargetCode.size() - 1).endsWith(":") || fun.type.equals("void")) {
+            TargetCode.add("ret " + (fun.type.equals("void") ? "void" : "i32 0"));
         }
         TargetCode.add("}");
         TargetCode.add("");
@@ -414,10 +414,10 @@ public class TargetCodeGenerator {
 
     public void printStmt(ASTNode Node, Integer blockID) throws ERR {
         if (Node.getNodeList().get(0).getToken().getSymbolType() == SymbolType.RETURNTK) {
-            if(Node.getNodeList().size()==3){
+            if (Node.getNodeList().size() == 3) {
                 TargetCode.add("ret i32 " + printExp(Node.getNodeList().get(1), blockID).print());
                 regPoint++;
-            }else {
+            } else {
                 TargetCode.add("ret void ");
                 regPoint++;
             }
@@ -747,11 +747,25 @@ public class TargetCodeGenerator {
             if (node.getToken().getSymbolType() == SymbolType.NOT) {
                 att *= -1;
             }
+
             if (node.getToken().getSymbolType() == SymbolType.GETINT || node.getToken().getSymbolType() == SymbolType.PUTINT
                     || node.getToken().getSymbolType() == SymbolType.GETCH || node.getToken().getSymbolType() == SymbolType.PUTCH) {
                 func = node;
             }
         }
+
+
+        ArrayList<ASTNode> list = new ArrayList<>();
+        for (ASTNode node : Node.getNodeList()) {
+            if (!node.getToken().getValue().equals("+") && !node.getToken().getValue().equals("-") && !node.getToken().getValue().equals("!")) {
+                list.add(node);
+                System.out.println(node.getToken().getValue());
+            }
+
+        }
+        System.out.println();
+
+
         if (func.getToken().getSymbolType() == SymbolType.GETINT || func.getToken().getSymbolType() == SymbolType.GETCH) {
             regPoint++;
             TargetCode.add("%" + regPoint + " = call i32 @" + func.getToken().getValue() + "()");
@@ -759,9 +773,11 @@ public class TargetCodeGenerator {
         } else if (func.getToken().getSymbolType() == SymbolType.PUTCH || func.getToken().getSymbolType() == SymbolType.PUTINT) {
             TargetCode.add("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2), blockID).print() + ")");
             reg = new regValue(regPoint.toString(), true, null);
-        } else if (Node.getNodeList().size() > 1 && Node.getNodeList().get(Node.getNodeList().size()-1).getToken().getValue().equals(")")) {
 
-            func f = funcMap.getfuncMap().get(Node.getNodeList().get(Node.getNodeList().size()-4).getNodeList().get(0).getToken().getValue());
+
+        } else if (list.size() > 1 && list.get(1).getToken().getValue().equals("(")) {
+
+            func f = funcMap.getfuncMap().get(list.get(0).getNodeList().get(0).getToken().getValue());
             if (Node.getNodeList().size() == 4) {
                 if (f.type.equals("int")) {
 
@@ -805,6 +821,7 @@ public class TargetCodeGenerator {
         int p = 0;
         regValue reg;
         ArrayList<ASTNode> List = Node.getNodeList();
+
 
         if (List.get(0).getToken().getSymbolType() == SymbolType.LPARENT) {
             return printExp(List.get(p + 1), blockID);
