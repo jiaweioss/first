@@ -339,8 +339,12 @@ public class TargetCodeGenerator {
                 Identifier key = utils.searchKey(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue(), blockID);
                 if (key.globle == 1) {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* @" + register.get(key));
+
                 } else {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
+                }
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
                 }
             }
         } else {
@@ -442,7 +446,9 @@ public class TargetCodeGenerator {
 
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + hold);
-
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
+                }
 
             } else if (key.Dimension.size() > 1 && key.Dimension.get(1) == 0) {
                 regValue reg;
@@ -464,6 +470,9 @@ public class TargetCodeGenerator {
 
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + hold);
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
+                }
             } else {
                 if (key.globle == 1) {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
@@ -471,6 +480,9 @@ public class TargetCodeGenerator {
                 } else {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                             + ", i32* %" + register.get(key));
+                }
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
                 }
             }
 
@@ -775,9 +787,9 @@ public class TargetCodeGenerator {
 
 
         } else if (list.size() > 1 && list.get(1).getToken().getValue().equals("(")) {
-
             func f = funcMap.getIRfuncMap().get(list.get(0).getNodeList().get(0).getToken().getValue());
             if (list.size() == 4) {
+
                 if (f.type.equals("int")) {
 
                     String s = printFuncRExp(List.get(List.size() - 2), blockID, f);
