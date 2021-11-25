@@ -22,7 +22,7 @@ public class Params {
                 s.append("[").append(dimension.get(i)).append(" x ");
             }
             s.append("i32");
-            s.append("]".repeat(Math.max(0, dimension.size() - 1)));
+            s.append("]".repeat(Math.max(0, dimension.size() - 2)));
             s.append("* ").append(regPoint.print());
         }
         return s.toString();
