@@ -776,7 +776,7 @@ public class TargetCodeGenerator {
         } else if (list.size() > 1 && list.get(1).getToken().getValue().equals("(")) {
 
             func f = funcMap.getfuncMap().get(list.get(0).getNodeList().get(0).getToken().getValue());
-            if (Node.getNodeList().size() == 4) {
+            if (list.size() == 4) {
                 if (f.type.equals("int")) {
 
                     String s = printFuncRExp(List.get(List.size() - 2), blockID, f);
