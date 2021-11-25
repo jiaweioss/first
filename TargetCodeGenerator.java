@@ -615,9 +615,9 @@ public class TargetCodeGenerator {
             TargetCode.add("%" + (++regPoint) + " = and i1 " +
                     temp1.print() + "," + temp2.print());
             temp1 = new regValue(regPoint.toString(), true, null);
-            for (int i = 4; i < Node.getNodeList().size() - 1; i += 2) {
 
-                temp2 = printAddExp(Node.getNodeList().get(i), blockID);
+            for (int i = 4; i < Node.getNodeList().size(); i += 2) {
+                temp2 = printEqExp(Node.getNodeList().get(i), blockID);
                 TargetCode.add("%" + (++regPoint) + " = and i1 " +
                         temp1.print() + ", " + temp2.print());
                 temp1 = new regValue(regPoint.toString(), true, null);
