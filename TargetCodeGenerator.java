@@ -743,6 +743,7 @@ public class TargetCodeGenerator {
             if (node.getToken().getSymbolType() == SymbolType.MINU) {
                 op *= -1;
             }
+
             if (node.getToken().getSymbolType() == SymbolType.NOT) {
                 att *= -1;
             }
@@ -758,9 +759,9 @@ public class TargetCodeGenerator {
         } else if (func.getToken().getSymbolType() == SymbolType.PUTCH || func.getToken().getSymbolType() == SymbolType.PUTINT) {
             TargetCode.add("call void @" + func.getToken().getValue() + "(i32 " + printExp(List.get(List.size() - 2), blockID).print() + ")");
             reg = new regValue(regPoint.toString(), true, null);
-        } else if (Node.getNodeList().size() > 1 && Node.getNodeList().get(1).getToken().getValue().equals("(")) {
+        } else if (Node.getNodeList().size() > 1 && Node.getNodeList().get(Node.getNodeList().size()-1).getToken().getValue().equals(")")) {
 
-            func f = funcMap.getfuncMap().get(Node.getNodeList().get(0).getNodeList().get(0).getToken().getValue());
+            func f = funcMap.getfuncMap().get(Node.getNodeList().get(Node.getNodeList().size()-4).getNodeList().get(0).getToken().getValue());
             if (Node.getNodeList().size() == 4) {
                 if (f.type.equals("int")) {
 
@@ -782,6 +783,7 @@ public class TargetCodeGenerator {
 
             reg = new regValue(regPoint.toString(), true, null);
         } else {
+
             reg = printPrimaryExp(List.get(List.size() - 1), blockID);
         }
         if (op == -1) {
