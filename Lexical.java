@@ -446,7 +446,9 @@ public class TargetCodeGenerator {
 
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + hold);
-
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
+                }
 
             } else if (key.Dimension.size() > 1 && key.Dimension.get(1) == 0) {
                 regValue reg;
@@ -468,6 +470,9 @@ public class TargetCodeGenerator {
 
                 TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                         + ", i32* %" + hold);
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
+                }
             } else {
                 if (key.globle == 1) {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
@@ -475,6 +480,9 @@ public class TargetCodeGenerator {
                 } else {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2), blockID).print()
                             + ", i32* %" + register.get(key));
+                }
+                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                    throw new ERR("g");
                 }
             }
 
