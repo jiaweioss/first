@@ -401,12 +401,18 @@ public class Grammar {
             case RETURNTK:
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                 nextToken();
-                Node.addNode(Exp());
+
                 if (currentToken.getSymbolType() == SymbolType.SEMICN) {
                     Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
                     nextToken();
                 } else {
-                    throw new ERR("Stmt:;没了");
+                    Node.addNode(Exp());
+                    if (currentToken.getSymbolType() == SymbolType.SEMICN) {
+                        Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+                        nextToken();
+                    } else {
+                        throw new ERR("g");
+                    }
                 }
                 break;
             case IDENT:
@@ -516,6 +522,7 @@ public class Grammar {
     }
 
     private ASTNode Cond() throws ERR {
+
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "Cond", 0), new ArrayList<>());
         Node.addNode(LOrExp());
         return Node;
@@ -603,6 +610,11 @@ public class Grammar {
     private ASTNode UnaryExp() throws ERR {
         ASTNode Node = new ASTNode(new Token(SymbolType.NONE, "UnaryExp", 0), new ArrayList<>());
         //
+        while (currentToken.getSymbolType() == SymbolType.PLUS
+                || currentToken.getSymbolType() == SymbolType.MINU || currentToken.getSymbolType() == SymbolType.NOT) {
+            Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
+            nextToken();
+        }
         if (currentToken.getSymbolType() == SymbolType.GETINT || currentToken.getSymbolType() == SymbolType.GETCH) {
             if (Tokens.get(Point).getSymbolType() == SymbolType.LPARENT) {
                 Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
@@ -656,13 +668,7 @@ public class Grammar {
                 }
             }
         } else {
-            while (currentToken.getSymbolType() == SymbolType.PLUS
-                    || currentToken.getSymbolType() == SymbolType.MINU || currentToken.getSymbolType() == SymbolType.NOT) {
-                Node.addNode(new ASTNode(currentToken, new ArrayList<>()));
-                nextToken();
-            }
             Node.addNode(PrimaryExp());
-
         }
         return Node;
     }
@@ -689,6 +695,7 @@ public class Grammar {
         } else if (currentToken.getSymbolType() == SymbolType.IDENT) {
             Node.addNode(LVal());
         } else {
+            System.out.println(currentToken.getValue());
             throw new ERR("没有number");
         }
         return Node;
