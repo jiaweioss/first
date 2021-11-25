@@ -593,8 +593,7 @@ public class TargetCodeGenerator {
                     temp1.print() + "," + temp2.print());
             temp1 = new regValue(regPoint.toString(), true, null);
             for (int i = 4; i < Node.getNodeList().size() - 1; i += 2) {
-
-                temp2 = printAddExp(Node.getNodeList().get(i), blockID);
+                temp2 = printAndExp(Node.getNodeList().get(i), blockID);
                 TargetCode.add("%" + (++regPoint) + " = or i1 " +
                         temp1.print() + ", " + temp2.print());
                 temp1 = new regValue(regPoint.toString(), true, null);
@@ -691,6 +690,7 @@ public class TargetCodeGenerator {
         regValue reg;
         int p = 0;
         ArrayList<ASTNode> List = Node.getNodeList();
+
         reg = printMulExp(List.get(p++), blockID);
 
         while (p < Node.getNodeList().size()) {
@@ -712,6 +712,7 @@ public class TargetCodeGenerator {
         regValue reg;
         int p = 0;
         ArrayList<ASTNode> List = Node.getNodeList();
+
         reg = printUnaryExp(List.get(p++), blockID);
         while (p < Node.getNodeList().size()) {
             if (List.get(p).getToken().getSymbolType() == SymbolType.MULT) {
