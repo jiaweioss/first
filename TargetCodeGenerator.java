@@ -405,7 +405,7 @@ public class TargetCodeGenerator {
         this.holdParams = fun.params;
         regPoint += fun.params.size();
         printTargetCode(List.get(List.size() - 1), blockID);
-        if (TargetCode.get(TargetCode.size() - 1).endsWith(":")) {
+        if (TargetCode.get(TargetCode.size() - 1).endsWith(":")||fun.type.equals("void")) {
             TargetCode.add("ret "+(fun.type.equals("void") ? "void" : "i32 0"));
         }
         TargetCode.add("}");
