@@ -67,8 +67,11 @@ public class Lexical {
                         nextChar();
                     }
                     if (currentChar == '(') {
-                        if (funcMap.getfuncMap().get("getint") == null)
+                        if (funcMap.getfuncMap().get("getint") == null) {
                             funcMap.getfuncMap().put("getint", new func("int", "getint", new ArrayList<>()));
+                            funcMap.getIRfuncMap().put("getint", new func("int", "getint", new ArrayList<>()));
+                        }
+
                         symbolType = SymbolType.GETINT;
                     }
 
@@ -77,8 +80,11 @@ public class Lexical {
                         nextChar();
                     }
                     if (currentChar == '(') {
-                        if (funcMap.getfuncMap().get("getch") == null)
+                        if (funcMap.getfuncMap().get("getch") == null){
                             funcMap.getfuncMap().put("getch", new func("int", "getch", new ArrayList<>()));
+                            funcMap.getIRfuncMap().put("getch", new func("int", "getch", new ArrayList<>()));
+                        }
+
                         symbolType = SymbolType.GETCH;
                     }
                 } else if (temp.toString().equals("putint")) {
@@ -92,6 +98,7 @@ public class Lexical {
                             ArrayList<Params> param = new ArrayList<>();
                             param.add(new Params(null, dimen));
                             funcMap.getfuncMap().put("putint", new func("void", "putint", param));
+                            funcMap.getIRfuncMap().put("putint", new func("void", "putint", param));
                         }
 
                         symbolType = SymbolType.PUTINT;
@@ -107,6 +114,7 @@ public class Lexical {
                             ArrayList<Params> param = new ArrayList<>();
                             param.add(new Params(null, dimen));
                             funcMap.getfuncMap().put("putch", new func("void", "putch", param));
+                            funcMap.getIRfuncMap().put("putch", new func("void", "putch", param));
                         }
 
                         symbolType = SymbolType.PUTCH;
@@ -127,6 +135,7 @@ public class Lexical {
                             param.add(new Params(null, tem));
 
                             funcMap.getfuncMap().put("putarray", new func("void", "putarray", param));
+                            funcMap.getIRfuncMap().put("putarray", new func("void", "putarray", param));
                         }
 
                         symbolType = SymbolType.IDENT;
@@ -143,6 +152,7 @@ public class Lexical {
                             ArrayList<Params> param = new ArrayList<>();
                             param.add(new Params(null, dimen));
                             funcMap.getfuncMap().put("getarray", new func("int", "getarray", param));
+                            funcMap.getIRfuncMap().put("getarray", new func("int", "getarray", param));
                         }
 
                         symbolType = SymbolType.IDENT;
