@@ -6,12 +6,9 @@ public class TargetCodeGenerator {
     int BID;
     ArrayList<Params> holdParams;
     whileBlock whileBlock;
-    //虚拟寄存器与变量的对应表
-    HashMap<Identifier, String> register;
-    //当前的虚拟寄存器编号
-    private Integer regPoint;
-    //中间代码字符串
-    ArrayList<String> TargetCode;
+    HashMap<Identifier, String> register;    //虚拟寄存器与变量的对应表
+    private Integer regPoint;    //当前的虚拟寄存器编号
+    ArrayList<String> TargetCode;    //中间代码字符串
 
 
     public TargetCodeGenerator() {
@@ -35,21 +32,11 @@ public class TargetCodeGenerator {
     }
 
     public void Generator(ASTNode Node) throws ERR {
-
         IRBlockMap.getBlockMap().put(0, new Block(0, null, 0));
-
-
         this.TargetCode = new ArrayList<>();
-
-
         Initial();//block0的变量分配空间
-
-
         defFunc();//输出所有的函数定义，包括函数调用
-
-
         printTargetCode(Node, 0);//生成中间代码
-
         for (String s : TargetCode
         ) {
             System.out.println(s);
@@ -232,8 +219,6 @@ public class TargetCodeGenerator {
     }
 
     public void AllocaArray(ArrayList<Integer> Dimension, ArrayList<Integer> arrayValue, int point) {
-
-
         if (Dimension.size() == 2) {
             TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
                     "* %" + (regPoint++) + ", i32 0" + ", i32 0");
@@ -255,8 +240,8 @@ public class TargetCodeGenerator {
             for (int i = 1; i <= Dimension.get(0); i++) {
                 TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
                         "* %" + (regPoint++) + ", i32 0" + ", i32 0");
-                AllocaArray(ArrayCutHead(Dimension), arrayValue, point);
-            }
+                
+            }AllocaArray(ArrayCutHead(Dimension), arrayValue, point);
         }
 
     }
@@ -328,11 +313,13 @@ public class TargetCodeGenerator {
             if (Node.getNodeList().get(1).getToken().getValue().equals("[")) {
                 Identifier ident = BlockMap.getBlockMap().get(blockID).Identifiers.get(IdentName);
 
+
                 ident.arrayValue = ConstInitValArray(Node.getNodeList().get(Node.getNodeList().size() - 1), ident.Dimension, blockID, "InitVal");
 
                 this.regPoint++;
                 TargetCode.add("%" + regPoint + " = getelementptr " + printArrayType(ident.Dimension) + " ," + printArrayType(ident.Dimension) +
                         "* %" + register.get(ident) + ", i32 0" + ", i32 0");
+
                 AllocaArray(ArrayCutHead(ident.Dimension), ident.arrayValue, 0);
 
             } else {
@@ -369,8 +356,6 @@ public class TargetCodeGenerator {
             childDimen *= dimen.get(i);
         }
         childDimen /= dimen.get(1);
-
-
         int temp = 0;
         if (dimen.size() <= 2) {
             for (ASTNode node : Node.getNodeList()) {
@@ -378,7 +363,6 @@ public class TargetCodeGenerator {
                     answer.add(ConstInitVal(node, blockId));
                     temp++;
                 }
-
             }
             for (int i = temp; i < dimen.get(1); i++) {
                 answer.add(0);
@@ -390,7 +374,6 @@ public class TargetCodeGenerator {
                     temp++;
                 }
             }
-
             for (int i = temp; i < dimen.get(1); i++) {
                 for (int k = 0; k < childDimen; k++)
                     answer.add(0);
