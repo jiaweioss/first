@@ -42,12 +42,12 @@ public class main {
         TOKEN.add(new Token(SymbolType.CODEEND, null, 0));
 
         ASTRoot = new Grammar(TOKEN).analyze();
-       for (Token token : TOKEN
-       ) {
-           System.out.println(token.getSymbolType() + " " + token.getValue());
-       }
-        printTree p = new printTree();
-        p.print(ASTRoot, 0);
+//        for (Token token : TOKEN
+//        ) {
+//            System.out.println(token.getSymbolType() + " " + token.getValue());
+//        }
+//         printTree p = new printTree();
+//         p.print(ASTRoot, 0);
 
 
 
