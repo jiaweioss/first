@@ -165,6 +165,8 @@ public class TargetCodeGenerator {
 
                 if (this.holdParams != null && this.holdParams.size() > 0) {
                     int i = 0;
+
+
                     for (Params p : holdParams) {
                         if (BlockMap.getBlockMap().get(blockID).Identifiers.containsKey(p.name)) {
                             IRBlockMap.getBlockMap().get(blockID).Identifiers.put(p.name, BlockMap.getBlockMap().get(blockID).Identifiers.get(p.name));
@@ -237,9 +239,9 @@ public class TargetCodeGenerator {
                 TargetCode.add("store i32 " + arrayValue.get(i) + ", i32* %" + regPoint);
             }
         } else {
-                TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
-                        "* %" + (regPoint++) + ", i32 0" + ", i32 0");
-                AllocaArray(ArrayCutHead(Dimension), arrayValue, point);
+            TargetCode.add("%" + (regPoint + 1) + " = getelementptr " + printArrayType(Dimension) + " ," + printArrayType(Dimension) +
+                    "* %" + (regPoint++) + ", i32 0" + ", i32 0");
+            AllocaArray(ArrayCutHead(Dimension), arrayValue, point);
         }
 
     }
@@ -258,6 +260,8 @@ public class TargetCodeGenerator {
                     TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
                     TargetCode.add("store " + printArrayType(ident.Dimension) + "%" + this.register.get(ident) + ", " +
                             printArrayType(ident.Dimension) + "* %" + regPoint);
+
+
                     this.register.put(ident, regPoint.toString());
                 } else {
                     this.register.put(ident, regPoint.toString());
@@ -272,7 +276,6 @@ public class TargetCodeGenerator {
                 TargetCode.add("%" + regPoint + " = alloca " + printArrayType(ident.Dimension));
             }
         }
-
     }
 
     public StringBuilder printArrayType(ArrayList<Integer> dimension) {
@@ -328,7 +331,7 @@ public class TargetCodeGenerator {
                 } else {
                     TargetCode.add("store i32 " + printExp(Node.getNodeList().get(2).getNodeList().get(0), blockID).print() + ", i32* %" + register.get(key));
                 }
-                if(TargetCode.get(TargetCode.size()-2).startsWith("call")){
+                if (TargetCode.get(TargetCode.size() - 2).startsWith("call")) {
                     throw new ERR("g");
                 }
             }
@@ -386,7 +389,7 @@ public class TargetCodeGenerator {
         ArrayList<ASTNode> List = Node.getNodeList();
         String name = List.get(1).getNodeList().get(0).getToken().getValue();
         func fun = funcMap.getfuncMap().get(name);
-        funcMap.getIRfuncMap().put(name,fun);
+        funcMap.getIRfuncMap().put(name, fun);
         TargetCode.add("define dso_local " + (fun.type.equals("void") ? "void" : "i32") + " @" + name + "(" + fun.printParams() + "){");
         this.holdParams = fun.params;
         regPoint += fun.params.size();
@@ -461,13 +464,15 @@ public class TargetCodeGenerator {
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("if")) {
 
             if (Node.getNodeList().size() <= 5) {
+
                 int mark;
-                TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
-                mark = TargetCode.size();
+                TargetCode.add("br label %" + (++regPoint));
                 TargetCode.add("");
                 TargetCode.add(regPoint + ":");
+                mark = printCond(Node.getNodeList().get(2), blockID);
                 printStmt(Node.getNodeList().get(4), blockID);
-                TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
+                regPoint++;
+                TargetCode.set(mark,TargetCode.get(mark).replace("#", regPoint.toString()));
 
                 TargetCode.add("br label %" + (regPoint));
                 TargetCode.add("");
@@ -475,16 +480,18 @@ public class TargetCodeGenerator {
 
             } else {
                 int mark1, mark2;
-                TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
-                mark1 = TargetCode.size();
+
+                TargetCode.add("br label %" + (++regPoint));
                 TargetCode.add("");
                 TargetCode.add(regPoint + ":");
+
+                mark1 = printCond(Node.getNodeList().get(2), blockID);
                 printStmt(Node.getNodeList().get(4), blockID);
                 TargetCode.add("br label %");
                 mark2 = TargetCode.size();
                 TargetCode.add("");
-
-                TargetCode.set(mark1 - 1, TargetCode.get(mark1 - 1) + (++regPoint));
+                regPoint++;
+                TargetCode.set(mark1,TargetCode.get(mark1).replace("#", regPoint.toString()));
                 TargetCode.add(regPoint + ":");
 
                 printStmt(Node.getNodeList().get(6), blockID);
@@ -497,32 +504,26 @@ public class TargetCodeGenerator {
 
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("while")) {
 
-            int mark;
             TargetCode.add("br label %" + (++regPoint));
             TargetCode.add("");
             TargetCode.add(regPoint + ":");
             int hold = regPoint;
-            TargetCode.add("br i1 " + printCond(Node.getNodeList().get(2), blockID).print() + ",label %" + (++regPoint) + ",label %");
-
-
+            int mark;
+            mark = printCond(Node.getNodeList().get(2), blockID);
             this.whileBlock = new whileBlock(this.whileBlock, regPoint);
-
-
-            mark = TargetCode.size();
-            TargetCode.add("");
-            TargetCode.add(regPoint + ":");
             printStmt(Node.getNodeList().get(4), blockID);
-            TargetCode.set(mark - 1, TargetCode.get(mark - 1) + (++regPoint));
+            regPoint++;
+            TargetCode.set(mark,TargetCode.get(mark).replace("#", regPoint.toString()));
 
             for (int i : whileBlock.breakLocate) {
                 TargetCode.set(i - 1, TargetCode.get(i - 1) + (regPoint));
             }
-
             TargetCode.add("br label %" + (hold));
             TargetCode.add("");
             TargetCode.add(regPoint + ":");
-
             this.whileBlock = whileBlock.Father;
+
+
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("Block")) {
             printTargetCode(Node.getNodeList().get(0), blockID++);
         } else if (Node.getNodeList().get(0).getToken().getValue().equals("continue")) {
@@ -564,54 +565,50 @@ public class TargetCodeGenerator {
         return s;
     }
 
-    public regValue printCond(ASTNode Node, Integer blockID) throws ERR {
+    public Integer printCond(ASTNode Node, Integer blockID) throws ERR {
         return printLorExp(Node.getNodeList().get(0), blockID);
     }
 
-    public regValue printLorExp(ASTNode Node, Integer blockID) throws ERR {
-        if (Node.getNodeList().size() > 1) {
-            regValue reg;
-            regValue temp1 = printAndExp(Node.getNodeList().get(0), blockID);
-            regValue temp2 = printAndExp(Node.getNodeList().get(2), blockID);
-            TargetCode.add("%" + (++regPoint) + " = or i1 " +
-                    temp1.print() + "," + temp2.print());
-            temp1 = new regValue(regPoint.toString(), true, null);
-            for (int i = 4; i < Node.getNodeList().size(); i += 2) {
-                temp2 = printAndExp(Node.getNodeList().get(i), blockID);
-                TargetCode.add("%" + (++regPoint) + " = or i1 " +
-                        temp1.print() + ", " + temp2.print());
-                temp1 = new regValue(regPoint.toString(), true, null);
-            }
-
-            reg = new regValue(regPoint.toString(), true, null);
-            return reg;
-        } else {
-            return printAndExp(Node.getNodeList().get(0), blockID);
+    public Integer printLorExp(ASTNode Node, Integer blockID) throws ERR {
+        ArrayList<Integer> temp = new ArrayList<>();
+        Integer hold = 0;
+        for (int i = 0; i < Node.getNodeList().size(); i += 2) {
+            hold = printAndExp(Node.getNodeList().get(i), blockID);
+            temp.add(hold);
+            if(i+2<Node.getNodeList().size())
+            TargetCode.set(hold,TargetCode.get(hold).replace("#", regPoint.toString()));
         }
-
+        for (Integer i : temp) {
+            TargetCode.set(i,TargetCode.get(i).replace("$", regPoint.toString()));
+        }
+        return hold;
     }
 
-    public regValue printAndExp(ASTNode Node, Integer blockID) throws ERR {
+    public Integer printAndExp(ASTNode Node, Integer blockID) throws ERR {
+        ArrayList<Integer> temp = new ArrayList<>();
+        int hold;
         if (Node.getNodeList().size() > 1) {
-            regValue reg;
-            regValue temp1 = printEqExp(Node.getNodeList().get(0), blockID);
-            regValue temp2 = printEqExp(Node.getNodeList().get(2), blockID);
-            TargetCode.add("%" + (++regPoint) + " = and i1 " +
-                    temp1.print() + "," + temp2.print());
-            temp1 = new regValue(regPoint.toString(), true, null);
-
-            for (int i = 4; i < Node.getNodeList().size(); i += 2) {
-                temp2 = printEqExp(Node.getNodeList().get(i), blockID);
-                TargetCode.add("%" + (++regPoint) + " = and i1 " +
-                        temp1.print() + ", " + temp2.print());
-                temp1 = new regValue(regPoint.toString(), true, null);
+            for (int i = 0; i < Node.getNodeList().size(); i += 2) {
+                TargetCode.add("br i1 " + printEqExp(Node.getNodeList().get(i), blockID).print() + ",label %" + (++regPoint) + ",label %");
+                temp.add(TargetCode.size() - 1);
+                TargetCode.add("");
+                TargetCode.add(regPoint + ":");
             }
-
-            reg = new regValue(regPoint.toString(), true, null);
-            return reg;
+            TargetCode.add("br label %$");
+            hold = TargetCode.size() - 1;
+            TargetCode.add("");
+            regPoint++;
+            for (Integer i : temp) {
+                TargetCode.set(i, TargetCode.get(i) + regPoint);
+            }
+            TargetCode.add(regPoint + ":");
         } else {
-            return printEqExp(Node.getNodeList().get(0), blockID);
+            TargetCode.add("br i1 " + printEqExp(Node.getNodeList().get(0), blockID).print() + ",label %$" + ",label %#");
+            hold = TargetCode.size() - 1;
+            TargetCode.add("");
+            TargetCode.add(++regPoint + ":");
         }
+        return hold;
     }
 
     public regValue printEqExp(ASTNode Node, Integer blockID) throws ERR {
